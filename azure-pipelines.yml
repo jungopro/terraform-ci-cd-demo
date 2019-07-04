@@ -13,9 +13,11 @@ steps:
     terraformVersion: '0.12.3'
 - task: TerraformCLI@0
   inputs:
-    command: 'init -backend-config="storage_account_name=$(STORAGE_ACCOUNT)" \
-    -backend-config="container_name=$(BLOB)" \
-    -backend-config="access_key=$(ACCESS_KEY)" \
-    -backend-config="key=terraform-ci-cd-demo.tfstate" \
-    -get=true \
-    -upgrade=true'
+    command: 'init'
+    commandOptions: '-get=true -upgrade=true'
+    backendType: 'azurerm'
+    backendServiceArm: 'Azure Dev Account'
+    backendAzureRmResourceGroupName: '$(RESOURCE_GROUP)'
+    backendAzureRmStorageAccountName: '$(STORAGE_ACCOUNT)'
+    backendAzureRmContainerName: '$(BLOB)'
+    backendAzureRmKey: 'terraform-ci-cd-demo.tfstate'
