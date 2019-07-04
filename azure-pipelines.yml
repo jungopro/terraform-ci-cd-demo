@@ -1,6 +1,9 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+variables:
+- group: terraform-azure-backend
+
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -10,4 +13,9 @@ steps:
     terraformVersion: '0.12.3'
 - task: TerraformCLI@0
   inputs:
-    command: 'init'
+    command: 'init -backend-config="storage_account_name=$(STORAGE_ACCOUNT)" \
+    -backend-config="container_name=$(BLOB)" \
+    -backend-config="access_key=$(ACCESS_KEY)" \
+    -backend-config="key=terraform-ci-cd-demo.tfstate" \
+    -get=true \
+    -upgrade=true'
