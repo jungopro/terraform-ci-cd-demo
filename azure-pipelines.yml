@@ -14,7 +14,8 @@ steps:
 - task: TerraformInstaller@0
   inputs:
     terraformVersion: '0.12.3'
-- task: TerraformInit@0
+- task: TerraformCLI@0
+  displayName: Initialize Terraform
   inputs:
     command: 'init'
     commandOptions: '-get=true -upgrade=true'
@@ -24,6 +25,7 @@ steps:
     backendAzureRmStorageAccountName: '$(STORAGE_ACCOUNT)'
     backendAzureRmContainerName: '$(BLOB)'
     backendAzureRmKey: 'terraform-ci-cd-demo.tfstate'
-- task: TerraformValidate@0
+- task: TerraformCLI@0
+  displayName: Validate Terraform Code
   inputs:
     command: 'validate'
