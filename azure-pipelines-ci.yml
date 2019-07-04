@@ -5,7 +5,8 @@ name: $(Date:yyyyMMdd)$(Rev:.r)
 pr: none
 
 variables:
-  TF_WORKSPACE: default
+- name: TF_WORKSPACE
+  value: default
 - group: terraform-azure-backend
 - group: terraform-azure-creds
 
