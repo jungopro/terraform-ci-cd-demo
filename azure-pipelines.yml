@@ -5,6 +5,7 @@ trigger: none
 
 variables:
 - group: terraform-azure-backend
+- group: terraform-azure-creds
 
 pool:
   vmImage: 'ubuntu-latest'
