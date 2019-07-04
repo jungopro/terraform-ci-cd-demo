@@ -1,0 +1,13 @@
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: TerraformInstaller@0
+  inputs:
+    terraformVersion: '0.12.3'
+- task: TerraformCLI@0
+  inputs:
+    command: 'init'
