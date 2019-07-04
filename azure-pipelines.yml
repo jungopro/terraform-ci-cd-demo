@@ -29,3 +29,8 @@ steps:
   displayName: Validate Terraform Code
   inputs:
     command: 'validate'
+- task: TerraformCLI@0
+  displayName: Terraform Unit Testing (Plan)
+  inputs:
+    command: 'plan'
+    environmentServiceName: 'Azure Dev Account'
