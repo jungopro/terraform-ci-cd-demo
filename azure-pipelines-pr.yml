@@ -1,9 +1,20 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger: none
+name: $(Date:yyyyMMdd)$(Rev:.r)
+pr: none
 
 variables:
+- name: TF_WORKSPACE
+  value: default
+- name: TF_VAR_client_id
+  value: $(ARM_CLIENT_ID)
+- name: TF_VAR_client_secret
+  value: $(ARM_CLIENT_SECRET)
+- name: TF_VAR_subcription_id
+  value: $(ARM_SUBSCRIPTION_ID)
+- name: TF_VAR_tenant_id
+  value: $(ARM_TENANT_ID)
 - group: terraform-azure-backend
 - group: terraform-azure-creds
 
@@ -11,26 +22,26 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- task: CmdLine@2
+  displayName: Env
+  inputs:
+    script: 'env'
+    workingDirectory: '$(Build.SourcesDirectory)'
 - task: TerraformInstaller@0
   inputs:
     terraformVersion: '0.12.3'
-- task: TerraformCLI@0
+- task: CmdLine@2
   displayName: Initialize Terraform
   inputs:
-    command: 'init'
-    commandOptions: '-get=true -upgrade=true'
-    backendType: 'azurerm'
-    backendServiceArm: 'Azure Dev Account'
-    backendAzureRmResourceGroupName: '$(RESOURCE_GROUP)'
-    backendAzureRmStorageAccountName: '$(STORAGE_ACCOUNT)'
-    backendAzureRmContainerName: '$(BLOB)'
-    backendAzureRmKey: 'terraform-ci-cd-demo.tfstate'
-- task: TerraformCLI@0
+    script: 'terraform init -get=true -upgrade=true -backend-config="storage_account_name=$(STORAGE_ACCOUNT)" -backend-config="access_key=$(ACCESS_KEY)" -backend-config="container_name=$(BLOB)" -backend-config="key=$(STATE_FILE)"'
+    workingDirectory: '$(Build.SourcesDirectory)'
+- task: CmdLine@2
   displayName: Validate Terraform Code
   inputs:
-    command: 'validate'
-- task: TerraformCLI@0
-  displayName: Terraform Unit Testing (Plan)
+    script: 'terraform validate'
+    workingDirectory: '$(Build.SourcesDirectory)'
+- task: CmdLine@2
+  displayName: Test Terraform Code (Plan)
   inputs:
-    command: 'plan'
-    environmentServiceName: 'Azure Dev Account'
+    script: 'terraform plan'
+    workingDirectory: '$(Build.SourcesDirectory)'
