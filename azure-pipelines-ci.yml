@@ -7,6 +7,14 @@ pr: none
 variables:
 - name: TF_WORKSPACE
   value: default
+- name: TF_VAR_client_id
+  value: $(ARM_CLIENT_ID)
+- name: TF_VAR_client_secret
+  value: $(ARM_CLIENT_SECRET)
+- name: TF_VAR_subcription_id
+  value: $(ARM_SUBSCRIPTION_ID)
+- name: TF_VAR_tenant_id
+  value: $(ARM_TENANT_ID)
 - group: terraform-azure-backend
 - group: terraform-azure-creds
 
