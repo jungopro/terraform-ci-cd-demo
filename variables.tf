@@ -23,7 +23,8 @@ variable "location" {
 }
 
 variable "tags" {
-  type        = "map"
+  type        = map(string)
   description = "list of tags to apply to the resources"
   default     = {}
 }
+

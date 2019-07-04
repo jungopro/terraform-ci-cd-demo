@@ -1,9 +1,15 @@
 locals {
-  tags = "${merge("${var.tags}", map("terraform workspace", "${terraform.workspace}"))}"
+  tags = merge(
+    var.tags,
+    {
+      "terraform workspace" = terraform.workspace
+    },
+  )
 }
 
-resource "azurerm_resource_group" "esource_group" {
+resource "azurerm_resource_group" "resource_group" {
   name     = "${terraform.workspace}-rg"
-  location = "${var.location}"
-  tags     = "${merge("${local.tags}")}"
+  location = var.location
+  tags     = merge(local.tags)
 }
+
