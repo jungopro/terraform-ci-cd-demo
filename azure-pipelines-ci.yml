@@ -38,3 +38,8 @@ steps:
     command: 'plan'
     commandOptions: '-out=$(TF_WORKSPACE)-$(Build.BuildId).plan'
     environmentServiceName: 'Azure Dev Account'
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: '**\*'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
