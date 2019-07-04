@@ -21,7 +21,7 @@ steps:
 - task: CmdLine@2
   displayName: Initialize Terraform
   inputs:
-    script: 'terraform init -get=true -upgrade=true -backend-config=$(Agent.TempDirectory)\azure.tfvars'
+    script: 'terraform init -get=true -upgrade=true -backend-config=$(Agent.TempDirectory)/azure.tfvars'
     workingDirectory: '$(Build.SourcesDirectory)'
 - task: CmdLine@2
   displayName: Validate Terraform Code
@@ -31,5 +31,5 @@ steps:
 - task: CmdLine@2
   displayName: Test Terraform Code (Plan)
   inputs:
-    script: 'terraform plan -var-file=$(Agent.TempDirectory)\azure.tfvars'
+    script: 'terraform plan -var-file=$(Agent.TempDirectory)/azure.tfvars'
     workingDirectory: '$(Build.SourcesDirectory)'
