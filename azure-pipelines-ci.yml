@@ -43,3 +43,7 @@ steps:
     SourceFolder: '$(Build.SourcesDirectory)'
     Contents: '**\*'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    artifact: '$(TF_WORKSPACE)'
