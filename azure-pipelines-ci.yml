@@ -1,9 +1,11 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+name: $(Date:yyyyMMdd)$(Rev:.r)
 pr: none
 
 variables:
+  TF_WORKSPACE: default
 - group: terraform-azure-backend
 - group: terraform-azure-creds
 
@@ -33,4 +35,5 @@ steps:
   displayName: Terraform Unit Testing (Plan)
   inputs:
     command: 'plan'
+    commandOptions: '-out=$(TF_WORKSPACE)-$(Build.BuildId).plan'
     environmentServiceName: 'Azure Dev Account'
