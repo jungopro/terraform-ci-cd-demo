@@ -2,7 +2,7 @@
 # https://aka.ms/yaml
 
 name: $(Date:yyyyMMdd)$(Rev:.r)
-pr: none
+trigger: none
 
 variables:
 - name: TF_WORKSPACE
