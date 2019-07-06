@@ -7,6 +7,8 @@ pr: [master,dev]
 variables:
 - name: TF_WORKSPACE
   value: default
+- name: STATE_FILE
+  value: terraform-ci-cd-demo.tfstate
 
 pool:
   vmImage: 'ubuntu-latest'
