@@ -1,4 +1,4 @@
-(https://vsrm.dev.azure.com/jungodevops/_apis/public/Release/badge/7b34d0fa-9f6a-49d2-9502-4020e2807c62/2/2)
+![Deployment Status](https://vsrm.dev.azure.com/jungodevops/_apis/public/Release/badge/7b34d0fa-9f6a-49d2-9502-4020e2807c62/2/2)
 
 # terraform-ci-cd-demo
 
