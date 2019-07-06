@@ -27,7 +27,7 @@ steps:
 - task: CmdLine@2
   displayName: Initialize Terraform
   inputs:
-    script: 'terraform init -get=true -upgrade=true -backend-config=$(Agent.TempDirectory)/backend.tfvars'
+    script: 'terraform init -get=true -upgrade=true -backend-config=$(Agent.TempDirectory)/backend.tfvars -backend-config=key=$(STATE_FILE)'
     workingDirectory: '$(Build.SourcesDirectory)'
 - task: CmdLine@2
   displayName: Validate Terraform Code
