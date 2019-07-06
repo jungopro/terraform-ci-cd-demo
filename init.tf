@@ -9,18 +9,6 @@ provider "azurerm" {
   tenant_id       = var.tenant_id
 }
 
-provider "random" {
-  version = "~> 2.0"
-}
-
-provider "template" {
-  version = "~> 2.1"
-}
-
-provider "null" {
-  version = "~> 2.1"
-}
-
 terraform {
   required_version = ">= 0.12"
   backend "azurerm" {}
