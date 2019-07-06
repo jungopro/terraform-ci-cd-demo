@@ -31,7 +31,7 @@ steps:
 - task: CmdLine@2
   displayName: Test Terraform Code (Plan)
   inputs:
-    script: 'terraform plan -lock=true -var-file=$(Agent.TempDirectory)/azure.tfvars -out=$(TF_WORKSPACE)-$(Build.BuildId).plan'
+    script: 'terraform plan -lock=true -var-file=$(Agent.TempDirectory)/azure.tfvars -out=$(Build.BuildId)-$(TF_WORKSPACE).plan'
     workingDirectory: '$(Build.SourcesDirectory)'
 - task: CopyFiles@2
   displayName: Prepare Artifacts
