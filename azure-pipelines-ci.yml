@@ -13,15 +13,21 @@ pool:
 
 steps:
 - task: DownloadSecureFile@1
+  displayName: Download Azure Subscription Connection Details
   inputs:
     secureFile: 'azure.tfvars'
+- task: DownloadSecureFile@1
+  displayName: Download Azure Backend Connection Details
+  inputs:
+    secureFile: 'backend.tfvars'
 - task: TerraformInstaller@0
+  displayName: Install Terraform
   inputs:
     terraformVersion: '0.12.3'
 - task: CmdLine@2
   displayName: Initialize Terraform
   inputs:
-    script: 'terraform init -get=true -upgrade=true -backend-config=$(Agent.TempDirectory)/azure.tfvars'
+    script: 'terraform init -get=true -upgrade=true -backend-config=$(Agent.TempDirectory)/backend.tfvars'
     workingDirectory: '$(Build.SourcesDirectory)'
 - task: CmdLine@2
   displayName: Validate Terraform Code
