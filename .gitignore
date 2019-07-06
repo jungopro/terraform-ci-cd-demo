@@ -7,3 +7,4 @@
 
 azure.tfvars
 *.plan
+backend.tfvars
