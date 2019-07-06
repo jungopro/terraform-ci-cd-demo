@@ -2,38 +2,26 @@
 # https://aka.ms/yaml
 
 name: $(Date:yyyyMMdd)$(Rev:.r)
-pr: none
+trigger: none
 
 variables:
 - name: TF_WORKSPACE
   value: default
-- name: TF_VAR_client_id
-  value: $(ARM_CLIENT_ID)
-- name: TF_VAR_client_secret
-  value: $(ARM_CLIENT_SECRET)
-- name: TF_VAR_subcription_id
-  value: $(ARM_SUBSCRIPTION_ID)
-- name: TF_VAR_tenant_id
-  value: $(ARM_TENANT_ID)
-- group: terraform-azure-backend
-- group: terraform-azure-creds
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: CmdLine@2
-  displayName: Env
+- task: DownloadSecureFile@1
   inputs:
-    script: 'env'
-    workingDirectory: '$(Build.SourcesDirectory)'
+    secureFile: 'azure.tfvars'
 - task: TerraformInstaller@0
   inputs:
     terraformVersion: '0.12.3'
 - task: CmdLine@2
   displayName: Initialize Terraform
   inputs:
-    script: 'terraform init -get=true -upgrade=true -backend-config="storage_account_name=$(STORAGE_ACCOUNT)" -backend-config="access_key=$(ACCESS_KEY)" -backend-config="container_name=$(BLOB)" -backend-config="key=$(STATE_FILE)"'
+    script: 'terraform init -get=true -upgrade=true -backend-config=$(Agent.TempDirectory)/azure.tfvars'
     workingDirectory: '$(Build.SourcesDirectory)'
 - task: CmdLine@2
   displayName: Validate Terraform Code
@@ -43,5 +31,5 @@ steps:
 - task: CmdLine@2
   displayName: Test Terraform Code (Plan)
   inputs:
-    script: 'terraform plan'
+    script: 'terraform plan -lock=true -var-file=$(Agent.TempDirectory)/azure.tfvars'
     workingDirectory: '$(Build.SourcesDirectory)'
