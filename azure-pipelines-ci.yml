@@ -2,6 +2,7 @@
 # https://aka.ms/yaml
 
 name: $(Date:yyyyMMdd)$(Rev:.r)
+trigger: master
 pr: none
 
 variables:
