@@ -15,5 +15,7 @@ steps:
   displayName: 'Install Terraform version $(TF-Version)'
   inputs:
     terraformVersion: '$(TF-Version)'
-- script: if [ $(terraform workspace select default) -ne 0 ]; then echo "Error"; else echo "good"; fi
-  displayName: 'Check Terraform workspace'
+- script: terraform init
+  displayName: 'Terraform Init'
+- script: terraform workspace select dev || terraform workspace new dev
+  displayName: 'Terraform workspace'
