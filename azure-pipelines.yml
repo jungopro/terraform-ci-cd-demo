@@ -15,6 +15,10 @@ steps:
   displayName: Download Azure Backend Connection Details
   inputs:
     secureFile: 'backend.tfvars'
+- task: DownloadSecureFile@1
+  displayName: Download Azure Backend Connection Details
+  inputs:
+    secureFile: 'azure-creds.tfvars'
 - task: TerraformInstaller@0
   displayName: 'Install Terraform version $(TF-Version)'
   inputs:
@@ -22,6 +26,23 @@ steps:
 - script: terraform init -get=true -upgrade=true -backend-config=$(Agent.TempDirectory)/backend.tfvars
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Terraform Init'
-- script: terraform workspace select dev || terraform workspace new dev
+- script: terraform workspace select $(TF-Workspace) || terraform workspace new $(TF-Workspace)
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Terraform workspace'
+- script: 'terraform validate'
+  workingDirectory: '$(Build.SourcesDirectory)'
+  displayName: 'Terraform Validate'
+- script: 'terraform plan -lock=true -var-file=$(Agent.TempDirectory)/azure-creds.tfvars -out=$(Build.BuildId)-$(TF-Workspace).plan'
+  displayName: 'Terraform Plan'
+  workingDirectory: '$(Build.SourcesDirectory)'
+- task: CopyFiles@2
+  displayName: Prepare Artifacts
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: '**/*'
+    TargetFolder: '$(Build.StagingDirectory)'
+- task: PublishPipelineArtifact@1
+  displayName: Publish Artifacts
+  inputs:
+    targetPath: '$(Build.StagingDirectory)'
+    artifact: '$(Build.BuildId)-$(TF-Workspace)'
