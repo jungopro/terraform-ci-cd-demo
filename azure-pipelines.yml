@@ -11,11 +11,17 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- task: DownloadSecureFile@1
+  displayName: Download Azure Backend Connection Details
+  inputs:
+    secureFile: 'backend.tfvars'
 - task: TerraformInstaller@0
   displayName: 'Install Terraform version $(TF-Version)'
   inputs:
     terraformVersion: '$(TF-Version)'
-- script: terraform init
+- script: terraform init -get=true -upgrade=true -backend-config=$(Agent.TempDirectory)/backend.tfvars
+  workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Terraform Init'
 - script: terraform workspace select dev || terraform workspace new dev
+  workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Terraform workspace'
