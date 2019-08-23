@@ -30,7 +30,7 @@ steps:
   displayName: 'Install Terraform version $(TF-Version)'
   inputs:
     terraformVersion: '$(TF-Version)'
-- script: terraform init -get=true -upgrade=true -backend-config='storage_account_name=$(sa-name)' -backend-config='container_name=$(blobl-name)' -backend-config='access_key=$(sa-key)' -backend-config='key=$(key)'
+- script: terraform init -get=true -upgrade=true -backend-config='storage_account_name=$(sa-name)' -backend-config='container_name=$(blob-name)' -backend-config='access_key=$(sa-key)' -backend-config='key=$(key)'
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Terraform Init'
 #- script: terraform workspace select $(TF-Workspace) || terraform workspace new $(TF-Workspace)
