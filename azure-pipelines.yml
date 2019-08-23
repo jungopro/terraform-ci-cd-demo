@@ -1,5 +1,7 @@
 # Terraform CI Pipeline
 
+name: $(Date:yyyyMMdd)$(Rev:.r)-$(Build.BuildId)
+
 trigger:
   branches:
     include:
