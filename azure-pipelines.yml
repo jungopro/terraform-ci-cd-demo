@@ -1,6 +1,5 @@
 # Terraform CI Pipeline
 
-name: $(Date:yyyyMMdd)$(Rev:.r)
 trigger:
   branches:
     include:
