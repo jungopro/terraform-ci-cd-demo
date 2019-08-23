@@ -8,7 +8,14 @@ locals {
 }
 
 resource "azurerm_resource_group" "resource_group" {
-  name     = "${terraform.workspace}-rg"
+  name     = {terraform.workspace}-rg
   location = var.location
-  tags     = merge(local.tags)
+  tags     = merge(local.tags, {"description" = "WAF RG"})
+}
+
+module "vnet" {
+  source = "./modules/vnet"
+  resource_group_name = azurerm_resource_group.resource_group.name
+  location = var.location
+  tags     = merge(local.tags, {"description" = "WAF vNet"})
 }
