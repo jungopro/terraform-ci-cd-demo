@@ -34,14 +34,14 @@ steps:
 - script: 'terraform plan -lock=true -var="subscription_id=$(subscription-id)" -var="client_id=$(client-id)" -var="client_secret=$(client-secret)" -var="tenant_id=$(tenant-id)" -out=$(Build.BuildId)-$(TF-Workspace).plan'
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Terraform Dry Run (Plan)'
-#- task: CopyFiles@2
-#  displayName: Prepare Artifacts
-#  inputs:
-#    SourceFolder: '$(Build.SourcesDirectory)'
-#    Contents: '**/*'
-#    TargetFolder: '$(Build.StagingDirectory)'
-#- task: PublishPipelineArtifact@1
-#  displayName: Publish Artifacts
-#  inputs:
-#    targetPath: '$(Build.StagingDirectory)'
-#    artifact: '$(Build.BuildId)-$(TF-Workspace)'
+- task: CopyFiles@2
+  displayName: Prepare Artifacts
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: '**/*'
+    TargetFolder: '$(Build.StagingDirectory)'
+- task: PublishPipelineArtifact@1
+  displayName: Publish Artifacts
+  inputs:
+    targetPath: '$(Build.StagingDirectory)'
+    artifact: '$(Build.BuildId)-$(TF-Workspace)'
