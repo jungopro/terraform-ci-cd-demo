@@ -1,8 +1,12 @@
 # Terraform CI Pipeline
 
 name: $(Date:yyyyMMdd)$(Rev:.r)
-trigger: [master]
-pr: none
+branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - azure-pipelines.yml
 
 pool:
   vmImage: 'ubuntu-latest'
