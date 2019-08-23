@@ -1,12 +1,13 @@
 # Terraform CI Pipeline
 
 name: $(Date:yyyyMMdd)$(Rev:.r)
-branches:
-    include:
-    - master
-  paths:
-    exclude:
-    - azure-pipelines.yml
+trigger:
+  branches:
+      include:
+      - master
+    paths:
+      exclude:
+      - azure-pipelines.yml
 
 pool:
   vmImage: 'ubuntu-latest'
