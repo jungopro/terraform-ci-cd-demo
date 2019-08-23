@@ -13,16 +13,8 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-# - task: DownloadSecureFile@1
-#   displayName: Download Azure Backend Connection Details
-#   inputs:
-#     secureFile: 'backend.tfvars'
-# - task: DownloadSecureFile@1
-#   displayName: Download Azure Backend Connection Details
-#   inputs:
-#     secureFile: 'azure-creds.tfvars'
 - task: AzureKeyVault@1
-  displayName: 'Download KV Secrets'
+  displayName: 'Download Key Vault Secrets'
   inputs:
     azureSubscription: 'Azure MSDN'
     KeyVaultName: 'DevOps-Terraform-KV'
@@ -36,9 +28,9 @@ steps:
 - script: terraform workspace select $(TF-Workspace) || terraform workspace new $(TF-Workspace)
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Switch to Environment $(TF-Workspace)'
-#- script: 'terraform validate'
-#  workingDirectory: '$(Build.SourcesDirectory)'
-#  displayName: 'Terraform Validate'
+- script: 'terraform validate'
+  workingDirectory: '$(Build.SourcesDirectory)'
+  displayName: 'Validate Terraform Code'
 #- script: 'terraform plan -lock=true -var-file=$(Agent.TempDirectory)/azure-creds.tfvars -out=$(Build.BuildId)-$(TF-Workspace).plan'
 #  displayName: 'Terraform Plan'
 #  workingDirectory: '$(Build.SourcesDirectory)'
