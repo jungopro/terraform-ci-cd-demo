@@ -1,0 +1,48 @@
+# Terraform CI Pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+trigger: [master]
+pr: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: DownloadSecureFile@1
+  displayName: Download Azure Backend Connection Details
+  inputs:
+    secureFile: 'backend.tfvars'
+- task: DownloadSecureFile@1
+  displayName: Download Azure Backend Connection Details
+  inputs:
+    secureFile: 'azure-creds.tfvars'
+- task: TerraformInstaller@0
+  displayName: 'Install Terraform version $(TF-Version)'
+  inputs:
+    terraformVersion: '$(TF-Version)'
+- script: terraform init -get=true -upgrade=true -backend-config=$(Agent.TempDirectory)/backend.tfvars
+  workingDirectory: '$(Build.SourcesDirectory)'
+  displayName: 'Terraform Init'
+- script: terraform workspace select $(TF-Workspace) || terraform workspace new $(TF-Workspace)
+  workingDirectory: '$(Build.SourcesDirectory)'
+  displayName: 'Terraform workspace'
+- script: 'terraform validate'
+  workingDirectory: '$(Build.SourcesDirectory)'
+  displayName: 'Terraform Validate'
+- script: 'terraform plan -lock=true -var-file=$(Agent.TempDirectory)/azure-creds.tfvars -out=$(Build.BuildId)-$(TF-Workspace).plan'
+  displayName: 'Terraform Plan'
+  workingDirectory: '$(Build.SourcesDirectory)'
+- task: CopyFiles@2
+  displayName: Prepare Artifacts
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: '**/*'
+    TargetFolder: '$(Build.StagingDirectory)'
+- task: PublishPipelineArtifact@1
+  displayName: Publish Artifacts
+  inputs:
+    targetPath: '$(Build.StagingDirectory)'
+    artifact: '$(Build.BuildId)-$(TF-Workspace)'
