@@ -3,11 +3,11 @@
 name: $(Date:yyyyMMdd)$(Rev:.r)
 trigger:
   branches:
-      include:
-      - master
-    paths:
-      exclude:
-      - azure-pipelines.yml
+    include:
+    - master
+  paths:
+    exclude:
+    - azure-pipelines.yml
 
 pool:
   vmImage: 'ubuntu-latest'
