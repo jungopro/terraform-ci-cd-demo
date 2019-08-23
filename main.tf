@@ -8,7 +8,7 @@ locals {
 }
 
 resource "azurerm_resource_group" "resource_group" {
-  name     = {terraform.workspace}-rg
+  name     = "${terraform.workspace}-rg"
   location = var.location
   tags     = merge(local.tags, {"description" = "WAF RG"})
 }
