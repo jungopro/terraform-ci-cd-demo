@@ -1,4 +1,4 @@
-![Deployment Status](https://vsrm.dev.azure.com/jungodevops/_apis/public/Release/badge/7b34d0fa-9f6a-49d2-9502-4020e2807c62/2/2)
+[![Build Status](https://dev.azure.com/jungodevops/Multiple-CI-Single-CD/_apis/build/status/jungopro.terraform-ci-cd-demo?branchName=master)](https://dev.azure.com/jungodevops/Multiple-CI-Single-CD/_build/latest?definitionId=12&branchName=master)
 
 # terraform-ci-cd-demo
 
