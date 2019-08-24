@@ -34,7 +34,7 @@ steps:
     clientId: '$(client-id)'
     clientSecret: '$(client-secret)'
     tenantId: '$(tenant-id)'
-- script: echo "Deleting all %TF-Workspace% workspace related files"; cd .terraform; del /f/q/s *.* > nul; cd..; rmdir /q/s .terraform; del /q $(TF-Workspace).plan
+- script: echo "Deleting all $TF-Workspace workspace related files"; rm -rf .terraform; rm -f $(TF-Workspace).plan
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Delete $(TF-Workspace) environment related files'
 - template: templates/terraform.yml
