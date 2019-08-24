@@ -1,16 +1,16 @@
 parameters:
-  sa-name: ''
-  blob-name: ''
-  sa-key: ''
-  state-key: ''
+  saName: ''
+  saName: ''
+  saKey: ''
+  stateKey: ''
   workspace: 'default'
-  subscription--id: ''
-  client-id: ''
-  client-secret: ''
-  tenant-id: ''
+  subscriptionId: ''
+  clientId: ''
+  clientSecret: ''
+  tenantId: ''
 
 steps:
-- script: terraform init -get=true -upgrade=true -backend-config='storage_account_name=${{ parameters.sa-name }}' -backend-config='container_name=${{ parameters.blob-name }}' -backend-config='access_key=${{ parameters.sa-key }}' -backend-config='key=${{ parameters.state-key }}'
+- script: terraform init -get=true -upgrade=true -backend-config='storage_account_name=${{ parameters.saName }}' -backend-config='container_name=${{ parameters.saName }}' -backend-config='access_key=${{ parameters.saKey }}' -backend-config='key=${{ parameters.stateKey }}'
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Terraform Init'
 - script: terraform workspace select ${{ parameters.workspace }} || terraform workspace new ${{ parameters.workspace }}
@@ -19,7 +19,7 @@ steps:
 - script: 'terraform validate'
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Validate Terraform Code'
-- script: 'terraform plan -lock=true -var="subscription_id=${{ parameters.subscription-id }}" -var="client_id=${{ parameters.client-id }}" -var="client_secret=${{ parameters.client-secret }}" -var="tenant_id=${{ parameters.tenant-id }}" -out=$(Build.BuildId)-${{ parameters.workspace }}.plan'
+- script: 'terraform plan -lock=true -var="subscription_id=${{ parameters.subscriptionId }}" -var="client_id=${{ parameters.clientId }}" -var="client_secret=${{ parameters.clientSecret }}" -var="tenant_id=${{ parameters.tenantId }}" -out=$(Build.BuildId)-${{ parameters.workspace }}.plan'
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Terraform Dry Run (Plan)'
 - task: CopyFiles@2
