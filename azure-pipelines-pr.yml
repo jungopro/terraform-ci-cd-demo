@@ -1,43 +1,25 @@
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# Terraform PR Pipeline
 
-name: $(Date:yyyyMMdd)$(Rev:.r)
-pr: [master,dev]
+name: Build-$(Build.BuildId)
+pr: [dev]
 
-variables:
-- name: TF_WORKSPACE
-  value: default
-- name: STATE_FILE
-  value: terraform-ci-cd-demo.tfstate
-
-pool:
-  vmImage: 'ubuntu-latest'
-
-steps:
-- task: DownloadSecureFile@1
-  displayName: Download Azure Subscription Connection Details
-  inputs:
-    secureFile: 'azure.tfvars'
-- task: DownloadSecureFile@1
-  displayName: Download Azure Backend Connection Details
-  inputs:
-    secureFile: 'backend.tfvars'
-- task: TerraformInstaller@0
-  displayName: Install Terraform
-  inputs:
-    terraformVersion: '0.12.3'
-- task: CmdLine@2
-  displayName: Initialize Terraform
-  inputs:
-    script: 'terraform init -get=true -upgrade=true -backend-config=$(Agent.TempDirectory)/backend.tfvars -backend-config=key=$(STATE_FILE)'
-    workingDirectory: '$(Build.SourcesDirectory)'
-- task: CmdLine@2
-  displayName: Validate Terraform Code
-  inputs:
-    script: 'terraform validate'
-    workingDirectory: '$(Build.SourcesDirectory)'
-- task: CmdLine@2
-  displayName: Test Terraform Code (Plan)
-  inputs:
-    script: 'terraform plan -lock=true -var-file=$(Agent.TempDirectory)/azure.tfvars'
-    workingDirectory: '$(Build.SourcesDirectory)'
+jobs:
+- job: dev
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - task: TerraformInstaller@0
+    displayName: 'Install Terraform version $(TF-Version)'
+    inputs:
+      terraformVersion: '$(TF-Version)'
+  - template: templates/terraform.yml
+    parameters:
+      saName: '$(sa-name)'
+      blobName: '$(blob-name)'
+      saKey: '$(sa-key)'
+      stateKey: '$(key)'
+      workspace: '$(Dev-WS)'
+      subscriptionId: '$(subscription-id)'
+      clientId: '$(client-id)'
+      clientSecret: '$(client-secret)'
+      tenantId: '$(tenant-id)'
