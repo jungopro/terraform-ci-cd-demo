@@ -1,6 +1,6 @@
 parameters:
   saName: ''
-  saName: ''
+  blobName: ''
   saKey: ''
   stateKey: ''
   workspace: 'default'
@@ -10,7 +10,7 @@ parameters:
   tenantId: ''
 
 steps:
-- script: terraform init -get=true -upgrade=true -backend-config='storage_account_name=${{ parameters.saName }}' -backend-config='container_name=${{ parameters.saName }}' -backend-config='access_key=${{ parameters.saKey }}' -backend-config='key=${{ parameters.stateKey }}'
+- script: terraform init -get=true -upgrade=true -backend-config='storage_account_name=${{ parameters.saName }}' -backend-config='container_name=${{ parameters.blobName }}' -backend-config='access_key=${{ parameters.saKey }}' -backend-config='key=${{ parameters.stateKey }}'
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Terraform Init'
 - script: terraform workspace select ${{ parameters.workspace }} || terraform workspace new ${{ parameters.workspace }}
