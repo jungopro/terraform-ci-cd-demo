@@ -48,6 +48,3 @@ steps:
     clientId: '$(client-id)'
     clientSecret: '$(client-secret)'
     tenantId: '$(tenant-id)'
-
-
-
