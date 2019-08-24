@@ -1,6 +1,6 @@
 # Terraform CI Pipeline
 
-name: $(Date:yyyyMMdd)$(Rev:.r)-$(Build.BuildId)
+name: Build-$(Build.BuildId)
 
 trigger:
   branches:
@@ -9,17 +9,18 @@ trigger:
   paths:
     exclude:
     - azure-pipelines.yml
+pr: none
 
 jobs:
 - job: dev
   pool:
     vmImage: 'ubuntu-latest'
   steps:
-  - task: AzureKeyVault@1
-    displayName: 'Download Key Vault Secrets'
-    inputs:
-      azureSubscription: 'Azure MSDN'
-      KeyVaultName: 'DevOps-Terraform-KV'
+#   - task: AzureKeyVault@1
+#     displayName: 'Download Key Vault Secrets'
+#     inputs:
+#       azureSubscription: 'Azure MSDN'
+#       KeyVaultName: 'DevOps-Terraform-KV'
   - task: TerraformInstaller@0
     displayName: 'Install Terraform version $(TF-Version)'
     inputs:
@@ -30,7 +31,7 @@ jobs:
       blobName: '$(blob-name)'
       saKey: '$(sa-key)'
       stateKey: '$(key)'
-      workspace: 'dev'
+      workspace: '$(Dev-WS)'
       subscriptionId: '$(subscription-id)'
       clientId: '$(client-id)'
       clientSecret: '$(client-secret)'
@@ -40,11 +41,11 @@ jobs:
   pool:
     vmImage: 'ubuntu-latest'
   steps:
-  - task: AzureKeyVault@1
-    displayName: 'Download Key Vault Secrets'
-    inputs:
-      azureSubscription: 'Azure MSDN'
-      KeyVaultName: 'DevOps-Terraform-KV'
+  #- task: AzureKeyVault@1
+  #  displayName: 'Download Key Vault Secrets'
+  #  inputs:
+  #    azureSubscription: 'Azure MSDN'
+  #    KeyVaultName: 'DevOps-Terraform-KV'
   - task: TerraformInstaller@0
     displayName: 'Install Terraform version $(TF-Version)'
     inputs:
@@ -55,7 +56,7 @@ jobs:
       blobName: '$(blob-name)'
       saKey: '$(sa-key)'
       stateKey: '$(key)'
-      workspace: 'test'
+      workspace: '$(Test-WS)'
       subscriptionId: '$(subscription-id)'
       clientId: '$(client-id)'
       clientSecret: '$(client-secret)'
@@ -65,11 +66,11 @@ jobs:
   pool:
     vmImage: 'ubuntu-latest'
   steps:
-  - task: AzureKeyVault@1
-    displayName: 'Download Key Vault Secrets'
-    inputs:
-      azureSubscription: 'Azure MSDN'
-      KeyVaultName: 'DevOps-Terraform-KV'
+  #- task: AzureKeyVault@1
+  #  displayName: 'Download Key Vault Secrets'
+  #  inputs:
+  #    azureSubscription: 'Azure MSDN'
+  #    KeyVaultName: 'DevOps-Terraform-KV'
   - task: TerraformInstaller@0
     displayName: 'Install Terraform version $(TF-Version)'
     inputs:
@@ -80,7 +81,7 @@ jobs:
       blobName: '$(blob-name)'
       saKey: '$(sa-key)'
       stateKey: '$(key)'
-      workspace: 'stg'
+      workspace: '$(Stage-WS)'
       subscriptionId: '$(subscription-id)'
       clientId: '$(client-id)'
       clientSecret: '$(client-secret)'
@@ -90,11 +91,11 @@ jobs:
   pool:
     vmImage: 'ubuntu-latest'
   steps:
-  - task: AzureKeyVault@1
-    displayName: 'Download Key Vault Secrets'
-    inputs:
-      azureSubscription: 'Azure MSDN'
-      KeyVaultName: 'DevOps-Terraform-KV'
+  #- task: AzureKeyVault@1
+  #  displayName: 'Download Key Vault Secrets'
+  #  inputs:
+  #    azureSubscription: 'Azure MSDN'
+  #    KeyVaultName: 'DevOps-Terraform-KV'
   - task: TerraformInstaller@0
     displayName: 'Install Terraform version $(TF-Version)'
     inputs:
@@ -105,7 +106,7 @@ jobs:
       blobName: '$(blob-name)'
       saKey: '$(sa-key)'
       stateKey: '$(key)'
-      workspace: 'prod'
+      workspace: '$(Production-WS)'
       subscriptionId: '$(subscription-id)'
       clientId: '$(client-id)'
       clientSecret: '$(client-secret)'
