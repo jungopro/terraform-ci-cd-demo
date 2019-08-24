@@ -1,6 +1,6 @@
 # Terraform CI Pipeline
 
-name: $(Date:yyyyMMdd)$(Rev:.r)-$(Build.BuildId)
+name: Build-$(Build.BuildId)
 
 trigger:
   branches:
