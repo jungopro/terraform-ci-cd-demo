@@ -23,26 +23,14 @@ steps:
   displayName: 'Install Terraform version $(TF-Version)'
   inputs:
     terraformVersion: '$(TF-Version)'
-- script: terraform init -get=true -upgrade=true -backend-config='storage_account_name=$(sa-name)' -backend-config='container_name=$(blob-name)' -backend-config='access_key=$(sa-key)' -backend-config='key=$(key)'
-  workingDirectory: '$(Build.SourcesDirectory)'
-  displayName: 'Terraform Init'
-- script: terraform workspace select $(TF-Workspace) || terraform workspace new $(TF-Workspace)
-  workingDirectory: '$(Build.SourcesDirectory)'
-  displayName: 'Switch to Environment $(TF-Workspace)'
-- script: 'terraform validate'
-  workingDirectory: '$(Build.SourcesDirectory)'
-  displayName: 'Validate Terraform Code'
-- script: 'terraform plan -lock=true -var="subscription_id=$(subscription-id)" -var="client_id=$(client-id)" -var="client_secret=$(client-secret)" -var="tenant_id=$(tenant-id)" -out=$(Build.BuildId)-$(TF-Workspace).plan'
-  workingDirectory: '$(Build.SourcesDirectory)'
-  displayName: 'Terraform Dry Run (Plan)'
-- task: CopyFiles@2
-  displayName: Prepare Artifacts
-  inputs:
-    SourceFolder: '$(Build.SourcesDirectory)'
-    Contents: '**/*'
-    TargetFolder: '$(Build.StagingDirectory)'
-- task: PublishPipelineArtifact@1
-  displayName: Publish Artifacts
-  inputs:
-    targetPath: '$(Build.StagingDirectory)'
-    artifact: '$(Build.BuildId)-$(TF-Workspace)'
+- template: templates/terraform.yml
+  parameters:
+    sa-name: '$(sa-name)'
+    blob-name: '$(blob-name)'
+    sa-key: '$(sa-key)'
+    state-key: '$(key)'
+    workspace: '$(TF-Workspace)'
+    subscription--id: '$(subscription-id)'
+    client-id: '$(client-id)'
+    client-secret: '$(client-secret)'
+    tenant-id: '$(tenant-id)'

@@ -1,0 +1,35 @@
+parameters:
+  sa-name: ''
+  blob-name: ''
+  sa-key: ''
+  state-key: ''
+  workspace: 'default'
+  subscription--id: ''
+  client-id: ''
+  client-secret: ''
+  tenant-id: ''
+
+steps:
+- script: terraform init -get=true -upgrade=true -backend-config='storage_account_name=${{ parameters.sa-name }}' -backend-config='container_name=${{ parameters.blob-name }}' -backend-config='access_key=${{ parameters.sa-key }}' -backend-config='key=${{ parameters.state-key }}'
+  workingDirectory: '$(Build.SourcesDirectory)'
+  displayName: 'Terraform Init'
+- script: terraform workspace select ${{ parameters.workspace }} || terraform workspace new ${{ parameters.workspace }}
+  workingDirectory: '$(Build.SourcesDirectory)'
+  displayName: 'Switch to Environment ${{ parameters.workspace }}'
+- script: 'terraform validate'
+  workingDirectory: '$(Build.SourcesDirectory)'
+  displayName: 'Validate Terraform Code'
+- script: 'terraform plan -lock=true -var="subscription_id=${{ parameters.subscription-id }}" -var="client_id=${{ parameters.client-id }}" -var="client_secret=${{ parameters.client-secret }}" -var="tenant_id=${{ parameters.tenant-id }}" -out=$(Build.BuildId)-${{ parameters.workspace }}.plan'
+  workingDirectory: '$(Build.SourcesDirectory)'
+  displayName: 'Terraform Dry Run (Plan)'
+- task: CopyFiles@2
+  displayName: Prepare Artifacts
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: '**/*'
+    TargetFolder: '$(Build.StagingDirectory)'
+- task: PublishPipelineArtifact@1
+  displayName: Publish Artifacts
+  inputs:
+    targetPath: '$(Build.StagingDirectory)'
+    artifact: '$(Build.BuildId)-${{ parameters.workspace }}'
