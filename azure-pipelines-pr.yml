@@ -3,6 +3,13 @@
 
 name: Build-$(Build.BuildId)
 
+trigger:
+  branches:
+    include:
+    - dev
+  paths:
+    exclude:
+    - azure-pipelines-pr.yml
 pr: [dev]
 
 pool:
