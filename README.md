@@ -12,6 +12,8 @@ A demo for a complete Terraform CI-CD Process using Azure DevOps Pipelines, depl
 
 ## Setup Terraform SPN and Connect Azure DevOps to Azure Key Vault
 
+## Setup Terraform PR
+
 ## Setup Terraform CI
 
 ## Setup Application CI
