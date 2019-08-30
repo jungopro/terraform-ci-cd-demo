@@ -8,7 +8,7 @@ trigger:
     - dev
   paths:
     exclude:
-    - azure-pipelines.yml
+    - azure-pipelines-dev.yml
 pr: none
 
 jobs:
