@@ -16,11 +16,6 @@ jobs:
   pool:
     vmImage: 'ubuntu-latest'
   steps:
-#   - task: AzureKeyVault@1
-#     displayName: 'Download Key Vault Secrets'
-#     inputs:
-#       azureSubscription: 'Azure MSDN'
-#       KeyVaultName: 'DevOps-Terraform-KV'
   - task: TerraformInstaller@0
     displayName: 'Install Terraform version $(TF-Version)'
     inputs:
@@ -41,11 +36,6 @@ jobs:
   pool:
     vmImage: 'ubuntu-latest'
   steps:
-  #- task: AzureKeyVault@1
-  #  displayName: 'Download Key Vault Secrets'
-  #  inputs:
-  #    azureSubscription: 'Azure MSDN'
-  #    KeyVaultName: 'DevOps-Terraform-KV'
   - task: TerraformInstaller@0
     displayName: 'Install Terraform version $(TF-Version)'
     inputs:
@@ -66,11 +56,6 @@ jobs:
   pool:
     vmImage: 'ubuntu-latest'
   steps:
-  #- task: AzureKeyVault@1
-  #  displayName: 'Download Key Vault Secrets'
-  #  inputs:
-  #    azureSubscription: 'Azure MSDN'
-  #    KeyVaultName: 'DevOps-Terraform-KV'
   - task: TerraformInstaller@0
     displayName: 'Install Terraform version $(TF-Version)'
     inputs:
@@ -91,11 +76,6 @@ jobs:
   pool:
     vmImage: 'ubuntu-latest'
   steps:
-  #- task: AzureKeyVault@1
-  #  displayName: 'Download Key Vault Secrets'
-  #  inputs:
-  #    azureSubscription: 'Azure MSDN'
-  #    KeyVaultName: 'DevOps-Terraform-KV'
   - task: TerraformInstaller@0
     displayName: 'Install Terraform version $(TF-Version)'
     inputs:
