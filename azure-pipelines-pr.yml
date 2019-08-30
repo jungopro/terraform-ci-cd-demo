@@ -22,6 +22,6 @@ steps:
 - script: 'terraform validate'
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Validate Terraform Code'
-- script: 'terraform plan -lock=true -var="subscription_id=$(subscription-id)" -var="client_id=$(client-id)" -var="client_secret=$(client-secret)" -var="tenant_id=$(tenant-id)" -out=$(Build.BuildId)-$(Dev-WS).plan'
+- script: 'terraform plan -lock=true -var="subscription_id=$(subscription-id)" -var="client_id=$(client-id)" -var="client_secret=$(client-secret)" -var="tenant_id=$(tenant-id)"'
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Terraform Dry Run (Plan)'
