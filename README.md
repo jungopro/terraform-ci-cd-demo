@@ -1,4 +1,4 @@
-**Build** [![Build Status](https://dev.azure.com/jungodevops/Multiple-CI-Single-CD/_apis/build/status/Terraform-CI?branchName=master)](https://dev.azure.com/jungodevops/Multiple-CI-Single-CD/_build/latest?definitionId=12&branchName=master)
+[![Build Status](https://dev.azure.com/jungodevops/Multiple-CI-Single-CD/_apis/build/status/Terraform-CI?branchName=master)](https://dev.azure.com/jungodevops/Multiple-CI-Single-CD/_build/latest?definitionId=12&branchName=master)
 
 | Stage      | Status                                                                                                                  |
 | ---------- | ----------------------------------------------------------------------------------------------------------------------- |
