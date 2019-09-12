@@ -27,3 +27,21 @@ resource "azurerm_subnet" "subnet" {
   address_prefix       = lookup(each.value, "cidr")
   service_endpoints    = lookup(each.value, "service_endpoints")
 }
+
+resource "random_integer" "uuid" { 
+  min = 100
+  max = 999
+}
+
+resource "azurerm_public_ip" "ingress_ip" {
+  name                = "${azurerm_resource_group.rg[0].name}${random_integer.uuid.result}pip"
+  location            = azurerm_resource_group.rg[0].location
+  resource_group_name = azurerm_resource_group.rg[0].name
+
+  allocation_method = "Static"
+  domain_name_label = "${azurerm_resource_group.rg[0].name}${random_integer.uuid.result}"
+
+  tags = {
+    environment = "${terraform.workspace}"
+  }
+}
