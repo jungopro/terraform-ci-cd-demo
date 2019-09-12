@@ -34,12 +34,12 @@ resource "random_integer" "uuid" {
 }
 
 resource "azurerm_public_ip" "ingress_ip" {
-  name                = "${azurerm_resource_group.rg.name}${random_integer.uuid.result}pip"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  name                = "${azurerm_resource_group.rg[0].name}${random_integer.uuid.result}pip"
+  location            = azurerm_resource_group.rg[0].location
+  resource_group_name = azurerm_resource_group.rg[0].name
 
   allocation_method = "Static"
-  domain_name_label = "${azurerm_resource_group.rg.name}${random_integer.uuid.result}"
+  domain_name_label = "${azurerm_resource_group.rg[0].name}${random_integer.uuid.result}"
 
   tags = {
     environment = "${terraform.workspace}"
