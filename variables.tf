@@ -44,7 +44,7 @@ variable "resource_group_location" {
 variable "vnet_cidr" {
   description = "The CIDR block for VNET"
   type        = list
-  default     = ["10.0.0.0/16"]
+  default     = ["172.16.0.0/16"]
 }
 
 variable "vnet_name" {
