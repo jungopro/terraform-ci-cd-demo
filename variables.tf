@@ -72,3 +72,15 @@ variable "subnets" {
 variable "k8s_version" {
   description = "K8s version to deploy in AKS. run `az aks get-versions` for a list of qualified values"
 }
+
+variable "profiles" {
+  type = map(object({
+    name  = string
+    count = number
+    vm_size         = string
+    os_type         = string
+    os_disk_size_gb = number
+    max_pods        = number
+  }))
+  default = {}
+}

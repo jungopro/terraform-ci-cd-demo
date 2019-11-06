@@ -61,22 +61,16 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   dynamic "agent_pool_profile" {
     for_each = var.profiles
+    iterator = profile
     content {
-      name            = lookup(agent_pool_profile.value, "name")
-      count           = 1
-      vm_size         = "Standard_B2ms"
-      os_type         = "Linux"
-      os_disk_size_gb = 30
-      max_pods        = 30
+      name            = lookup(profile.value, "name")
+      count           = lookup(profile.value, "count")
+      vm_size         = lookup(profile.value, "vm_size")
+      os_type         = lookup(profile.value, "os_type")
+      os_disk_size_gb = lookup(profile.value, "os_disk_size_gb")
+      max_pods        = lookup(profile.value, "max_pods")
       vnet_subnet_id  = azurerm_subnet.subnet["subnet-1"].id
       type            = "VirtualMachineScaleSets"
     }
   }
-}
-
-variable "profiles" {
-  type = map(object({
-    name              = string
-  }))
-  default = {}
 }
