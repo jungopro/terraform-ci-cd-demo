@@ -68,3 +68,7 @@ variable "subnets" {
   }))
   default = {}
 }
+
+variable "k8s_version" {
+  description = "K8s version to deploy in AKS. run `az aks get-versions` for a list of qualified values"
+}

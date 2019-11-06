@@ -14,3 +14,14 @@ subnets = {
     service_endpoints = []
   }
 }
+
+k8s_version = "1.14.8"
+
+profiles = {
+  default = {
+    name = "default"
+  }
+  gpu = {
+    name = "gpu"
+  }
+}
