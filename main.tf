@@ -28,20 +28,34 @@ resource "azurerm_subnet" "subnet" {
   service_endpoints    = lookup(each.value, "service_endpoints")
 }
 
-resource "random_integer" "uuid" { 
-  min = 100
-  max = 999
-}
+/*resource "azurerm_kubernetes_cluster" "aks" {
+  name                = "${terraform.workspace}-aks"
+  location            = var.create_resource_group ? azurerm_resource_group.rg[0].location : var.resource_group_location
+  resource_group_name = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
+  dns_prefix          = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
+  kubernetes_version  = "1.14.7"
 
-resource "azurerm_public_ip" "ingress_ip" {
-  name                = "${azurerm_resource_group.rg[0].name}${random_integer.uuid.result}pip"
-  location            = azurerm_resource_group.rg[0].location
-  resource_group_name = azurerm_resource_group.rg[0].name
-
-  allocation_method = "Static"
-  domain_name_label = "${azurerm_resource_group.rg[0].name}${random_integer.uuid.result}"
-
-  tags = {
-    environment = "${terraform.workspace}"
+  agent_pool_profile {
+    name            = "default"
+    count           = 3
+    vm_size         = "Standard_B2ms"
+    os_type         = "Linux"
+    os_disk_size_gb = 30
+    max_pods        = 30
+    vnet_subnet_id  = azurerm_subnet.subnet[0].id
+    type            = "VirtualMachineScaleSets"
   }
-}
+
+  network_profile {
+    network_plugin = "azure"
+  }
+
+  service_principal {
+    client_id     = var.client_id
+    client_secret = var.client_secret
+  }
+
+  role_based_access_control {
+    enabled = true
+  }
+}*/
