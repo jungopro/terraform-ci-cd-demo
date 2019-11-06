@@ -44,7 +44,7 @@ variable "resource_group_location" {
 variable "vnet_cidr" {
   description = "The CIDR block for VNET"
   type        = list
-  default     = ["10.0.0.0/16"]
+  default     = ["172.16.0.0/16"]
 }
 
 variable "vnet_name" {
@@ -65,6 +65,22 @@ variable "subnets" {
     name              = string
     cidr              = string
     service_endpoints = list(string)
+  }))
+  default = {}
+}
+
+variable "k8s_version" {
+  description = "K8s version to deploy in AKS. run `az aks get-versions` for a list of qualified values"
+}
+
+variable "profiles" {
+  type = map(object({
+    name  = string
+    count = number
+    vm_size         = string
+    os_type         = string
+    os_disk_size_gb = number
+    max_pods        = number
   }))
   default = {}
 }
