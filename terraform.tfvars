@@ -14,3 +14,24 @@ subnets = {
     service_endpoints = []
   }
 }
+
+k8s_version = "1.14.8"
+
+profiles = {
+  default = {
+    name  = "default"
+    count = 2
+    vm_size         = "Standard_B2ms"
+    os_type         = "Linux"
+    os_disk_size_gb = 30
+    max_pods        = 30
+  }
+  gpu = {
+    name  = "micro"
+    count = 1
+    vm_size         = "Standard_B1s"
+    os_type         = "Linux"
+    os_disk_size_gb = 30
+    max_pods        = 30
+  }
+}
