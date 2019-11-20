@@ -54,7 +54,7 @@ provider "helm" {
 
 terraform {
   required_version = ">= 0.12"
-  backend "remote" {}
+  backend "azurerm" {}
 }
 
 data "azurerm_client_config" "current" {}
