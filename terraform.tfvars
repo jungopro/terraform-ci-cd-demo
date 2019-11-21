@@ -19,16 +19,16 @@ k8s_version = "1.14.8"
 
 profiles = {
   default = {
-    name  = "default"
-    count = 1
+    name            = "default"
+    count           = 1
     vm_size         = "Standard_B2ms"
     os_type         = "Linux"
     os_disk_size_gb = 30
     max_pods        = 30
   }
   gpu = {
-    name  = "gpu"
-    count = 1
+    name            = "gpu"
+    count           = 1
     vm_size         = "Standard_NC6_Promo"
     os_type         = "Linux"
     os_disk_size_gb = 30
