@@ -38,7 +38,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
   dns_prefix          = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
   kubernetes_version  = var.k8s_version
-  tags = local.tags
+  tags                = local.tags
 
   network_profile {
     network_plugin = "azure"
@@ -108,4 +108,22 @@ resource "kubernetes_cluster_role_binding" "tiller_sa_cluster_admin_rb" {
   }
 
   # depends_on = [azurerm_kubernetes_cluster.aks, local_file.kubeconfig]
+}
+
+resource "helm_release" "ingress" {
+  name      = "ingress"
+  chart     = "stable/nginx-ingress"
+  namespace = "kube-system"
+  timeout   = 1800
+
+  depends_on = [kubernetes_cluster_role_binding.tiller_sa_cluster_admin_rb]
+
+  set {
+    name  = "controller.service.loadBalancerIP"
+    value = azurerm_public_ip.pip.ip_address
+  }
+  set {
+    name  = "controller.service.annotations.\"service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group\""
+    value = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
+  }
 }
