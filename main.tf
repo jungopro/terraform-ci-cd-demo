@@ -107,7 +107,7 @@ resource "kubernetes_cluster_role_binding" "tiller_sa_cluster_admin_rb" {
     api_group = ""
   }
 
-  # depends_on = [azurerm_kubernetes_cluster.aks, local_file.kubeconfig]
+  depends_on = [azurerm_kubernetes_cluster.aks, local_file.kubeconfig]
 }
 
 resource "helm_release" "ingress" {
