@@ -125,7 +125,7 @@ resource "local_file" "kubeconfig" {
 
   # helm init
   provisioner "local-exec" {
-    command = "curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh; chmod 700 get_helm.sh; ./get_helm.sh; helm init --client-only"
+    command = "curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh; chmod 700 get_helm.sh; ./get_helm.sh; helm repo add stable https://kubernetes-charts.storage.googleapis.com/; helm repo update"
     environment = {
       KUBECONFIG = "$HOME/.kube/config"
     }
