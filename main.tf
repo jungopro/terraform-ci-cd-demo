@@ -94,7 +94,7 @@ resource "azurerm_lb" "lb" {
 #### K8s Resources ####
 #######################
 
-resource "kubernetes_service_account" "tiller_sa" {
+/*resource "kubernetes_service_account" "tiller_sa" {
   metadata {
     name      = "tiller"
     namespace = "kube-system"
@@ -116,7 +116,7 @@ resource "kubernetes_cluster_role_binding" "tiller_sa_cluster_admin_rb" {
     namespace = "kube-system"
     api_group = ""
   }
-}
+}*/
 
 resource "local_file" "kubeconfig" {
   # kube config
