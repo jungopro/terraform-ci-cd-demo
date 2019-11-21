@@ -38,7 +38,10 @@ provider "kubernetes" {
 provider "helm" {
   debug            = true
   version          = "~> 0.10"
-  install_tiller   = false
+  namespace       = "kube-system"
+  service_account = kubernetes_service_account.tiller_sa.metadata.0.name
+  install_tiller  = true
+
   kubernetes {
     host     = azurerm_kubernetes_cluster.aks.kube_config.0.host
     username = azurerm_kubernetes_cluster.aks.kube_config.0.username

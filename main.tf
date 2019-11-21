@@ -94,7 +94,7 @@ resource "azurerm_lb" "lb" {
 #### K8s Resources ####
 #######################
 
-/*resource "kubernetes_service_account" "tiller_sa" {
+resource "kubernetes_service_account" "tiller_sa" {
   metadata {
     name      = "tiller"
     namespace = "kube-system"
@@ -116,7 +116,7 @@ resource "kubernetes_cluster_role_binding" "tiller_sa_cluster_admin_rb" {
     namespace = "kube-system"
     api_group = ""
   }
-}*/
+}
 
 resource "local_file" "kubeconfig" {
   # kube config
@@ -125,7 +125,7 @@ resource "local_file" "kubeconfig" {
 
   # helm init
   provisioner "local-exec" {
-    command = "curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh; chmod 700 get_helm.sh; ./get_helm.sh; helm repo add stable https://kubernetes-charts.storage.googleapis.com/; helm repo update"
+    command = "helm init --client-only"
     environment = {
       KUBECONFIG = "$HOME/.kube/config"
     }
