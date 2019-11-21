@@ -27,9 +27,9 @@ profiles = {
     max_pods        = 30
   }
   gpu = {
-    name            = "gpu"
+    name            = "general"
     count           = 1
-    vm_size         = "Standard_NC6_Promo"
+    vm_size         = "Standard_A2_v2"
     os_type         = "Linux"
     os_disk_size_gb = 30
     max_pods        = 30
