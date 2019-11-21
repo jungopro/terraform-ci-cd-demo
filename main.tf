@@ -77,6 +77,18 @@ resource "azurerm_public_ip" "pip" {
   tags                = local.tags
 }
 
+resource "azurerm_lb" "lb" {
+  name                = "${terraform.workspace}-lb"
+  location            = var.create_resource_group ? azurerm_resource_group.rg[0].location : var.resource_group_location
+  resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
+  tags                = local.tags
+
+  frontend_ip_configuration {
+    name                 = azurerm_public_ip.pip.name
+    public_ip_address_id = azurerm_public_ip.pip.id
+  }
+}
+
 
 #######################
 #### K8s Resources ####
@@ -87,8 +99,6 @@ resource "kubernetes_service_account" "tiller_sa" {
     name      = "tiller"
     namespace = "kube-system"
   }
-
-  # depends_on = [azurerm_kubernetes_cluster.aks, local_file.kubeconfig]
 }
 
 resource "kubernetes_cluster_role_binding" "tiller_sa_cluster_admin_rb" {
@@ -106,11 +116,9 @@ resource "kubernetes_cluster_role_binding" "tiller_sa_cluster_admin_rb" {
     namespace = "kube-system"
     api_group = ""
   }
-
-  # depends_on = [azurerm_kubernetes_cluster.aks, local_file.kubeconfig]
 }
 
-resource "helm_release" "ingress" {
+/*resource "helm_release" "ingress" {
   name      = "ingress"
   chart     = "stable/nginx-ingress"
   namespace = "kube-system"
@@ -126,4 +134,4 @@ resource "helm_release" "ingress" {
     name  = "controller.service.annotations.\"service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group\""
     value = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
   }
-}
+}*/
