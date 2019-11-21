@@ -118,7 +118,7 @@ resource "kubernetes_cluster_role_binding" "tiller_sa_cluster_admin_rb" {
   }
 }
 
-/*resource "helm_release" "ingress" {
+resource "helm_release" "ingress" {
   name      = "ingress"
   chart     = "stable/nginx-ingress"
   namespace = "kube-system"
@@ -134,4 +134,4 @@ resource "kubernetes_cluster_role_binding" "tiller_sa_cluster_admin_rb" {
     name  = "controller.service.annotations.\"service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group\""
     value = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
   }
-}*/
+}
