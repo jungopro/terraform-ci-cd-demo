@@ -118,7 +118,21 @@ resource "kubernetes_cluster_role_binding" "tiller_sa_cluster_admin_rb" {
   }
 }
 
-resource "helm_release" "ingress" {
+resource "local_file" "kubeconfig" {
+  # kube config
+  filename = "$HOME/.kube/config"
+  content  = azurerm_kubernetes_cluster.aks.kube_config_raw
+
+  # helm init
+  provisioner "local-exec" {
+    command = "curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh; chmod 700 get_helm.sh; ./get_helm.sh; helm init --client-only"
+    environment = {
+      KUBECONFIG = "$HOME/.kube/config"
+    }
+  }
+}
+
+/*resource "helm_release" "ingress" {
   name      = "ingress"
   chart     = "stable/nginx-ingress"
   namespace = "kube-system"
@@ -134,4 +148,4 @@ resource "helm_release" "ingress" {
     name  = "controller.service.annotations.\"service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group\""
     value = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
   }
-}
+}*/
