@@ -17,6 +17,7 @@ A demo for a complete Terraform CI-CD Process using Azure DevOps Pipelines, depl
   - [Connect Azure DevOps to Azure Key Vault](#connect-azure-devops-to-azure-key-vault)
   - [Inner-loop (dev) cycle](#inner-loop-dev-cycle)
     - [Terraform Task Group Template](#terraform-task-group-template)
+  - [Setup Terraform PR](#setup-terraform-pr)
     - [PR Pipeline](#pr-pipeline)
     - [GitHub Branch Policy](#github-branch-policy)
     - [Dev CI CD](#dev-ci-cd)
@@ -38,6 +39,8 @@ A demo for a complete Terraform CI-CD Process using Azure DevOps Pipelines, depl
 ## Inner-loop (dev) cycle
 
 ### Terraform Task Group Template
+
+## Setup Terraform PR
 
 ### PR Pipeline
 
