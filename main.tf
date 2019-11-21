@@ -144,6 +144,6 @@ resource "helm_release" "ingress" {
   }
   set {
     name  = "controller.service.annotations.\"service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group\""
-    value = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
+    value = azurerm_kubernetes_cluster.aks.node_resource_group
   }
 }
