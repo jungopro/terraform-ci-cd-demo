@@ -77,13 +77,6 @@ resource "azurerm_public_ip" "pip" {
   tags                = local.tags
 }
 
-resource "azurerm_lb" "lb" {
-  name                = "${terraform.workspace}-lb"
-  location            = var.create_resource_group ? azurerm_resource_group.rg[0].location : var.resource_group_location
-  resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
-  tags                = local.tags
-}
-
 
 #######################
 #### K8s Resources ####
@@ -141,6 +134,4 @@ resource "helm_release" "ingress" {
     name  = "controller.service.annotations.\"service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group\""
     value = azurerm_kubernetes_cluster.aks.node_resource_group
   }
-
-  depends_on = [azurerm_lb.lb]
 }
