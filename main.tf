@@ -82,11 +82,6 @@ resource "azurerm_lb" "lb" {
   location            = var.create_resource_group ? azurerm_resource_group.rg[0].location : var.resource_group_location
   resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
   tags                = local.tags
-
-  frontend_ip_configuration {
-    name                 = azurerm_public_ip.pip.name
-    public_ip_address_id = azurerm_public_ip.pip.id
-  }
 }
 
 
@@ -120,14 +115,14 @@ resource "kubernetes_cluster_role_binding" "tiller_sa_cluster_admin_rb" {
 
 resource "local_file" "kubeconfig" {
   # kube config
-  filename = "$HOME/.kube/config"
+  filename = "./${terraform.workspace}-config.yaml"
   content  = azurerm_kubernetes_cluster.aks.kube_config_raw
 
   # helm init
   provisioner "local-exec" {
     command = "helm init --client-only"
     environment = {
-      KUBECONFIG = "$HOME/.kube/config"
+      KUBECONFIG = "./${terraform.workspace}-config.yaml"
     }
   }
 }
@@ -146,4 +141,6 @@ resource "helm_release" "ingress" {
     name  = "controller.service.annotations.\"service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group\""
     value = azurerm_kubernetes_cluster.aks.node_resource_group
   }
+
+  depends_on = [azurerm_lb.lb]
 }
