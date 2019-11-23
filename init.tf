@@ -36,11 +36,13 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  debug           = true
-  version         = "~> 0.10"
-  namespace       = "kube-system"
-  service_account = "tiller"
-  install_tiller  = "true"
+  debug            = true
+  version          = "~> 0.10"
+  namespace        = "kube-system"
+  service_account  = kubernetes_service_account.tiller_sa.metadata.0.name
+  install_tiller   = true
+  
+
   kubernetes {
     host     = azurerm_kubernetes_cluster.aks.kube_config.0.host
     username = azurerm_kubernetes_cluster.aks.kube_config.0.username
@@ -49,6 +51,8 @@ provider "helm" {
     client_certificate     = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_certificate)
     client_key             = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_key)
     cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.cluster_ca_certificate)
+
+    load_config_file = false
   }
 }
 

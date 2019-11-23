@@ -2,12 +2,16 @@ locals {
   tags = merge(var.tags, { "workspace" = "${terraform.workspace}" })
 }
 
+#######################
+### Azure Resources ###
+#######################
+
 resource "azurerm_resource_group" "rg" {
   count    = var.create_resource_group ? 1 : 0
   name     = "${terraform.workspace}-${var.resource_group_name}"
   location = var.resource_group_location
 
-  tags = merge({ "Name" = format("%s", var.resource_group_name) }, local.tags)
+  tags = local.tags
 }
 
 resource "azurerm_virtual_network" "vnet" {
@@ -16,7 +20,7 @@ resource "azurerm_virtual_network" "vnet" {
   address_space       = var.vnet_cidr
   location            = var.create_resource_group ? azurerm_resource_group.rg[0].location : var.resource_group_location
   dns_servers         = var.vnet_dns_servers
-  tags                = merge({ "Name" = format("%s", var.vnet_name) }, local.tags)
+  tags                = local.tags
 }
 
 resource "azurerm_subnet" "subnet" {
@@ -34,6 +38,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
   dns_prefix          = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
   kubernetes_version  = var.k8s_version
+  tags                = local.tags
 
   network_profile {
     network_plugin = "azure"
@@ -70,4 +75,63 @@ resource "azurerm_public_ip" "pip" {
   resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
   allocation_method   = "Static"
   tags                = local.tags
+}
+
+
+#######################
+#### K8s Resources ####
+#######################
+
+resource "kubernetes_service_account" "tiller_sa" {
+  metadata {
+    name      = "tiller"
+    namespace = "kube-system"
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "tiller_sa_cluster_admin_rb" {
+  metadata {
+    name = "tiller-cluster-role"
+  }
+  role_ref {
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+    api_group = "rbac.authorization.k8s.io"
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = kubernetes_service_account.tiller_sa.metadata.0.name
+    namespace = "kube-system"
+    api_group = ""
+  }
+}
+
+resource "local_file" "kubeconfig" {
+  # kube config
+  filename = "./${terraform.workspace}-config.yaml"
+  content  = azurerm_kubernetes_cluster.aks.kube_config_raw
+
+  # helm init
+  provisioner "local-exec" {
+    command = "helm init --client-only"
+    environment = {
+      KUBECONFIG = "./${terraform.workspace}-config.yaml"
+    }
+  }
+}
+
+resource "helm_release" "ingress" {
+  name      = "ingress"
+  chart     = "stable/nginx-ingress"
+  namespace = "kube-system"
+  timeout   = 1800
+
+  set {
+    name  = "controller.service.loadBalancerIP"
+    value = azurerm_public_ip.pip.ip_address
+  }
+  set {
+    name  = "controller.service.annotations.\"service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group\""
+    value = azurerm_kubernetes_cluster.aks.node_resource_group
+  }
 }

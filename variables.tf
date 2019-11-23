@@ -75,8 +75,8 @@ variable "k8s_version" {
 
 variable "profiles" {
   type = map(object({
-    name  = string
-    count = number
+    name            = string
+    count           = number
     vm_size         = string
     os_type         = string
     os_disk_size_gb = number
