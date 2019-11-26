@@ -53,7 +53,15 @@ resource "azurerm_kubernetes_cluster" "aks" {
     enabled = true
   }
 
-  dynamic "agent_pool_profile" {
+  default_node_pool {
+    name            = "default"
+    node_count      = 1
+    vm_size         = "Standard_B2ms"
+    os_disk_size_gb = 30
+    max_pods        = 30
+  }
+
+  /*dynamic "agent_pool_profile" {
     for_each = var.profiles
     iterator = profile
     content {
@@ -66,7 +74,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
       vnet_subnet_id  = azurerm_subnet.subnet["subnet-1"].id
       type            = "VirtualMachineScaleSets"
     }
-  }
+  }*/
 }
 
 resource "random_pet" "prefix" {
