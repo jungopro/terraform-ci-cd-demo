@@ -93,7 +93,6 @@ variable "repo_password" {}
 
 variable "node_pools" {
   type = map(object({
-    name            = string
     node_count      = number
     vm_size         = string
   }))
