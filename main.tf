@@ -69,14 +69,20 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
+resource "random_pet" "prefix" {
+  keepers = {
+    resource_group_name = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
+  }
+}
+
 resource "azurerm_public_ip" "pip" {
   name                = "${terraform.workspace}-pip"
   location            = var.create_resource_group ? azurerm_resource_group.rg[0].location : var.resource_group_location
   resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
   allocation_method   = "Static"
+  domain_name_label   = "${random_pet.prefix.id}-${terraform.workspace}-${var.resource_group_name}"
   tags                = local.tags
 }
-
 
 #######################
 #### K8s Resources ####
@@ -106,6 +112,10 @@ resource "kubernetes_cluster_role_binding" "tiller_sa_cluster_admin_rb" {
   }
 }
 
+######################
+### Helm Resources ###
+######################
+
 resource "local_file" "kubeconfig" {
   # kube config
   filename = "./${terraform.workspace}-config.yaml"
@@ -133,5 +143,27 @@ resource "helm_release" "ingress" {
   set {
     name  = "controller.service.annotations.\"service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group\""
     value = azurerm_kubernetes_cluster.aks.node_resource_group
+  }
+}
+
+data "helm_repository" "jungo" {
+  name     = var.repo_name
+  url      = "https://${var.repo_name}.azurecr.io/helm/v1/repo"
+  username = var.repo_username
+  password = var.repo_password
+}
+
+resource "helm_release" "parrot" {
+  name       = "parrot"
+  repository = data.helm_repository.jungo.metadata[0].name
+  chart      = "parrot"
+  timeout    = 1800
+  set {
+    name  = "ingress.basedomain"
+    value = "${random_pet.prefix.id}-${terraform.workspace}-${var.resource_group_name}.westeurope.cloudapp.azure.com"
+  }
+  set {
+    name  = "image.repository"
+    value = "${var.repo_name}.azurecr.io/parrot"
   }
 }
