@@ -20,7 +20,7 @@ steps:
 - script: terraform workspace select '$(Dev-WS)' || terraform workspace new '$(Dev-WS)'
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Switch to Environment $(Dev-WS)'
-- script: 'terraform validate -var="subscription_id=$(subscription-id)" -var="client_id=$(client-id)" -var="client_secret=$(client-secret)" -var="tenant_id=$(tenant-id)" -var="repo_name=$(repo_name)" -var="repo_username=$(repo_username)" -var="repo_password=$(repo_password)"'
+- script: 'terraform validate'
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Validate Terraform Code'
 - script: 'terraform plan -lock=true -var="subscription_id=$(subscription-id)" -var="client_id=$(client-id)" -var="client_secret=$(client-secret)" -var="tenant_id=$(tenant-id)" -var="repo_name=$(repo_name)" -var="repo_username=$(repo_username)" -var="repo_password=$(repo_password)"'
