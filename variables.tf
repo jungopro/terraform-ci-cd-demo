@@ -90,3 +90,11 @@ variable "repo_name" {}
 variable "repo_username" {}
 
 variable "repo_password" {}
+
+variable "node_pools" {
+  type = map(object({
+    node_count      = number
+    vm_size         = string
+  }))
+  default = {}
+}
