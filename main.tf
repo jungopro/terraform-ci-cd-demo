@@ -60,21 +60,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
     os_disk_size_gb = 30
     max_pods        = 30
   }
+}
 
-  /*dynamic "agent_pool_profile" {
-    for_each = var.profiles
-    iterator = profile
-    content {
-      name            = lookup(profile.value, "name")
-      count           = lookup(profile.value, "count")
-      vm_size         = lookup(profile.value, "vm_size")
-      os_type         = lookup(profile.value, "os_type")
-      os_disk_size_gb = lookup(profile.value, "os_disk_size_gb")
-      max_pods        = lookup(profile.value, "max_pods")
-      vnet_subnet_id  = azurerm_subnet.subnet["subnet-1"].id
-      type            = "VirtualMachineScaleSets"
-    }
-  }*/
+resource "azurerm_kubernetes_cluster_node_pool" "pools" {
+  for_each              = var.node_pools
+  name                  = each.key
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  vm_size               = lookup(each.value, "vm_size")
+  node_count            = lookup(each.value, "node_count")
 }
 
 resource "random_pet" "prefix" {

@@ -17,21 +17,13 @@ subnets = {
 
 k8s_version = "1.14.8"
 
-profiles = {
-  default = {
-    name            = "default"
-    count           = 1
-    vm_size         = "Standard_B2ms"
-    os_type         = "Linux"
-    os_disk_size_gb = 30
-    max_pods        = 30
+node_pools = {
+  pool-1 = {
+    node_count = 1
+    vm_size    = "Standard_B2ms"
   }
-  gpu = {
-    name            = "general"
-    count           = 1
-    vm_size         = "Standard_A2_v2"
-    os_type         = "Linux"
-    os_disk_size_gb = 30
-    max_pods        = 30
+  pool-2 = {
+    node_count = 1
+    vm_size    = "Standard_A2_v2"
   }
 }
