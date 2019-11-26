@@ -145,25 +145,3 @@ resource "helm_release" "ingress" {
     value = azurerm_kubernetes_cluster.aks.node_resource_group
   }
 }
-
-data "helm_repository" "jungo" {
-  name     = var.repo_name
-  url      = "https://${var.repo_name}.azurecr.io/helm/v1/repo"
-  username = var.repo_username
-  password = var.repo_password
-}
-
-resource "helm_release" "parrot" {
-  name       = "parrot"
-  repository = data.helm_repository.jungo.metadata[0].name
-  chart      = "parrot"
-  timeout    = 1800
-  set {
-    name  = "ingress.basedomain"
-    value = "${random_pet.prefix.id}-${terraform.workspace}-${var.resource_group_name}.westeurope.cloudapp.azure.com"
-  }
-  set {
-    name  = "image.repository"
-    value = "${var.repo_name}.azurecr.io/parrot"
-  }
-}
