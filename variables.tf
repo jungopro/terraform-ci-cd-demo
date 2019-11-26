@@ -84,3 +84,9 @@ variable "profiles" {
   }))
   default = {}
 }
+
+variable "repo_name" {}
+
+variable "repo_username" {}
+
+variable "repo_password" {}
