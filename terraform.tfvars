@@ -18,11 +18,11 @@ subnets = {
 k8s_version = "1.14.8"
 
 node_pools = {
-  pool-1 = {
+  pool1 = {
     node_count = 1
     vm_size    = "Standard_B2ms"
   }
-  pool-2 = {
+  pool2 = {
     node_count = 1
     vm_size    = "Standard_A2_v2"
   }
