@@ -145,4 +145,9 @@ resource "helm_release" "ingress" {
     name  = "controller.service.annotations.\"service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group\""
     value = azurerm_kubernetes_cluster.aks.node_resource_group
   }
+
+  depends_on = [
+    kubernetes_cluster_role_binding.tiller_sa_cluster_admin_rb,
+    kubernetes_service_account.tiller_sa
+  ]
 }
