@@ -39,7 +39,7 @@ provider "helm" {
   namespace       = "kube-system"
   service_account = kubernetes_service_account.tiller_sa.metadata.0.name
   install_tiller  = true
-  home            = "${abspath(path.root)}/.helm"
+  home            = "${abspath(path.root)}/.helm" # hack to workaround the issue when planning and applying on different agents in CI / CD pipeline. Known issue with 0.12. See here: https://github.com/terraform-providers/terraform-provider-helm/issues/335 and here: https://github.com/terraform-providers/terraform-provider-helm/issues/319#issuecomment-523766938
 
   kubernetes {
     host = azurerm_kubernetes_cluster.aks.kube_config.0.host
