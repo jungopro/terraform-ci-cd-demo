@@ -72,12 +72,6 @@ variable "k8s_version" {
   description = "K8s version to deploy in AKS. run `az aks get-versions` for a list of qualified values"
 }
 
-variable "repo_name" {}
-
-variable "repo_username" {}
-
-variable "repo_password" {}
-
 variable "node_pools" {
   type = map(object({
     node_count = number
@@ -88,7 +82,7 @@ variable "node_pools" {
 }
 
 variable "apps" {
-  type    = map(object({
+  type = map(object({
     version = string
   }))
   default = {}

@@ -26,7 +26,7 @@ node_pools = {
 apps = {
   parrot = {
     version = "v0.3.0"
-}
+  }
   captainkube = {
     version = "v0.4.0"
   }

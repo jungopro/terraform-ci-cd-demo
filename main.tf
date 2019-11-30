@@ -151,10 +151,10 @@ resource "kubernetes_cluster_role_binding" "default_view" {
 ### Get ACR Data
 
 data "helm_repository" "repo" {
-  name     = var.repo_name
-  url      = "https://${var.repo_name}.azurecr.io/helm/v1/repo"
-  username = var.repo_username
-  password = var.repo_password
+  name     = "jungo"
+  url      = "https://jungo.azurecr.io/helm/v1/repo"
+  username = "jungo"
+  password = "hGcwoyo0HHxZzuKZ47z1l9HbF=IKMb25"
 }
 
 ### Define Parrot additional values to be passed as inputs to the chart
@@ -177,7 +177,7 @@ resource "helm_release" "phippyandfriends" {
 
   set {
     name  = "image.repository"
-    value = "${var.repo_name}.azurecr.io/${each.key}"
+    value = "jungo.azurecr.io/${each.key}"
   }
 
   dynamic "set" {
@@ -194,84 +194,3 @@ resource "helm_release" "phippyandfriends" {
     kubernetes_cluster_role_binding.default_view
   ]
 }
-
-
-
-
-/*
-resource "helm_release" "parrot" {
-  name       = "parrot"
-  repository = data.helm_repository.repo.metadata[0].name
-  chart      = "parrot"
-  namespace  = kubernetes_namespace.phippyandfriends.metadata.0.name
-
-  set {
-    name  = "image.repository"
-    value = "${var.repo_name}.azurecr.io/parrot"
-  }
-
-  set {
-    name  = "ingress.basedomain"
-    value = azurerm_kubernetes_cluster.aks.addon_profile.0.http_application_routing[0].http_application_routing_zone_name
-  }
-
-  depends_on = [
-    kubernetes_cluster_role_binding.tiller_sa_cluster_admin_rb,
-    kubernetes_service_account.tiller_sa,
-    kubernetes_cluster_role_binding.default_view
-  ]
-}
-
-resource "helm_release" "captainkube" {
-  name       = "captainkube"
-  repository = data.helm_repository.repo.metadata[0].name
-  chart      = "captainkube"
-  namespace  = kubernetes_namespace.phippyandfriends.metadata.0.name
-
-  set {
-    name  = "image.repository"
-    value = "${var.repo_name}.azurecr.io/captainkube"
-  }
-
-  depends_on = [
-    kubernetes_cluster_role_binding.tiller_sa_cluster_admin_rb,
-    kubernetes_service_account.tiller_sa,
-    kubernetes_cluster_role_binding.default_view
-  ]
-}
-
-resource "helm_release" "nodebrady" {
-  name       = "nodebrady"
-  repository = data.helm_repository.repo.metadata[0].name
-  chart      = "nodebrady"
-  namespace  = kubernetes_namespace.phippyandfriends.metadata.0.name
-
-  set {
-    name  = "image.repository"
-    value = "${var.repo_name}.azurecr.io/nodebrady"
-  }
-
-  depends_on = [
-    kubernetes_cluster_role_binding.tiller_sa_cluster_admin_rb,
-    kubernetes_service_account.tiller_sa,
-    kubernetes_cluster_role_binding.default_view
-  ]
-}
-
-resource "helm_release" "phippy" {
-  name       = "phippy"
-  repository = data.helm_repository.repo.metadata[0].name
-  chart      = "phippy"
-  namespace  = kubernetes_namespace.phippyandfriends.metadata.0.name
-
-  set {
-    name  = "image.repository"
-    value = "${var.repo_name}.azurecr.io/phippy"
-  }
-
-  depends_on = [
-    kubernetes_cluster_role_binding.tiller_sa_cluster_admin_rb,
-    kubernetes_service_account.tiller_sa,
-    kubernetes_cluster_role_binding.default_view
-  ]
-}*/
