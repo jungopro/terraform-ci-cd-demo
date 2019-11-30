@@ -151,10 +151,10 @@ resource "kubernetes_cluster_role_binding" "default_view" {
 ### Get ACR Data
 
 data "helm_repository" "repo" {
-  name     = "jungo"
-  url      = "https://jungo.azurecr.io/helm/v1/repo"
-  username = "jungo"
-  password = "dWJkdePnJyeirp1Sj4RsV9svtOZ=xH=y"
+  name     = var.repo_name
+  url      = "https://${var.repo_name}.azurecr.io/helm/v1/repo"
+  username = var.repo_username
+  password = var.repo_password
 }
 
 ### Define Parrot additional values to be passed as inputs to the chart
@@ -177,7 +177,7 @@ resource "helm_release" "phippyandfriends" {
 
   set {
     name  = "image.repository"
-    value = "jungo.azurecr.io/${each.key}"
+    value = "${var.repo_name}.azurecr.io/${each.key}"
   }
 
   dynamic "set" {

@@ -87,3 +87,15 @@ variable "apps" {
   }))
   default = {}
 }
+
+variable "repo_name" {
+  description = "name of the ACR holding the charts"
+}
+
+variable "repo_username" {
+  description = "Admin username of the ACR"
+}
+
+variable "repo_password" {
+  description = "Admin password of the ACR"
+}
