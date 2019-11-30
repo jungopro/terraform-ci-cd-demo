@@ -8,3 +8,12 @@
 azure.tfvars
 *.plan
 backend.*
+.helm/cache/archive/captainkube-v0.4.0.tgz
+.helm/cache/archive/nodebrady-v0.3.0.tgz
+.helm/cache/archive/parrot-v0.3.0.tgz
+.helm/cache/archive/phippy-v0.3.0.tgz
+.helm/repository/repositories.yaml
+.helm/repository/cache/jungo-index.yaml
+.helm/repository/cache/local-index.yaml
+.helm/repository/cache/stable-index.yaml
+.helm/repository/local/index.yaml

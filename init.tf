@@ -39,6 +39,7 @@ provider "helm" {
   namespace       = "kube-system"
   service_account = kubernetes_service_account.tiller_sa.metadata.0.name
   install_tiller  = true
+  home            = "${abspath(path.root)}/.helm"
 
   kubernetes {
     host = azurerm_kubernetes_cluster.aks.kube_config.0.host

@@ -154,7 +154,7 @@ data "helm_repository" "repo" {
   name     = "jungo"
   url      = "https://jungo.azurecr.io/helm/v1/repo"
   username = "jungo"
-  password = "hGcwoyo0HHxZzuKZ47z1l9HbF=IKMb25"
+  password = "dWJkdePnJyeirp1Sj4RsV9svtOZ=xH=y"
 }
 
 ### Define Parrot additional values to be passed as inputs to the chart
