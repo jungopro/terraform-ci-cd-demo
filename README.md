@@ -46,6 +46,8 @@ We will cover:
 - Create the CI to build and puse each microservice artifact to ACR
 - Create CD to deploy the entire infrastrucute and application to Azure
 
+The Azure DevOps project that showcasing the entire process is publicly available for you to view [here](https://dev.azure.com/jungodevops/Multiple-CI-Single-CD/_dashboards/dashboard/bceea2bf-aab0-4f9e-b52d-7b4906a2bb7f)
+
 ## Connect GitHub and Azure DevOps
 
 - The official documentation from Microsoft can be found [here](https://docs.microsoft.com/en-us/azure/devops/pipelines/repos/github?view=azure-devops&tabs=yaml)
