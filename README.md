@@ -1,5 +1,7 @@
 # Terraform CI CD Demo
 
+<img src="https://jungoterraform.blob.core.windows.net/demo/phippyandfriends.png" width="400" height="400" alt="PhippyandFriends"/><img src="https://jungoterraform.blob.core.windows.net/demo/Terraform-AzureDevOps-KeyVault.png" width="400" height="400" alt="TerraformCICD"/>
+
 A demo for a complete Terraform CI-CD Process using Azure DevOps Pipelines, deploying infrastructure and application to Azure
 
 - [Terraform CI CD Demo](#terraform-ci-cd-demo)
@@ -158,3 +160,134 @@ Same code is deployed to all environments
 ## GitHub Tags
 
 Once code is pushed to master it will create a git tag in github for future refernece. you can download the code for any tag to revert back to a point in time
+
+## Terraform Code Techniques
+
+Below is a list of snippets and exaplanation for different techniques I used in code deployment
+
+```tf
+locals {
+  tags = merge(var.tags, { "workspace" = "${terraform.workspace}" }) # add terraform workspace tag to any additional tags given as input
+}
+
+resource "azurerm_resource_group" "rg" {
+  count    = var.create_resource_group ? 1 : 0 # conditional creation
+  name     = "${terraform.workspace}-${var.resource_group_name}"
+  location = var.resource_group_location
+
+  tags = local.tags
+}
+```
+
+Usage of the `terraform.workspace` special meta data to create distinc environments from a single code. Also, tag each resource with the meta data for traceability, so you can easily connect actual resource to a terraform workspace
+
+```tf
+provider "azurerm" {
+  version = "~> 1.2"
+
+  subscription_id = var.subscription_id
+  client_id       = var.client_id
+  client_secret   = var.client_secret
+  tenant_id       = var.tenant_id
+}
+```
+
+Configure the provider using explicit variables. This prevents the need to setup Terraform reserved environment variables, such as *ARM_CLIENT_ID* in the build and deploy phase
+
+```tf
+provider "kubernetes" {
+  version                = "~> 1.8"
+  host                   = azurerm_kubernetes_cluster.aks.kube_config.0.host
+  client_certificate     = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_certificate)
+  client_key             = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_key)
+  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.cluster_ca_certificate)
+}
+```
+
+Configure the kubernetes provider using outputs from the aks resource. This helps creating a dependency and assures that kubernetes-related resoruces will get created after aks-related resources
+
+```tf
+provider "helm" {
+  debug           = true
+  version         = "~> 0.10"
+  namespace       = "kube-system"
+  service_account = kubernetes_service_account.tiller_sa.metadata.0.name
+  install_tiller  = true
+  home            = "${abspath(path.root)}/.helm" 
+
+  kubernetes {
+    host = azurerm_kubernetes_cluster.aks.kube_config.0.host
+
+    client_certificate     = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_certificate)
+    client_key             = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_key)
+    cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.cluster_ca_certificate)
+  }
+}
+```
+
+Same comment here, for the configuration using aks resource outputs. In addition, the `home = "${abspath(path.root)}/.helm"` is used since we run the CI and CD in seperatation, using the `-out plan.file`. This is a [known bug](https://github.com/terraform-providers/terraform-provider-helm/issues/335).
+
+```tf
+main.tf
+
+locals {
+  parrot_values = {
+    "ingress.basedomain" = azurerm_kubernetes_cluster.aks.addon_profile.0.http_application_routing[0].http_application_routing_zone_name
+  }
+}
+
+resource "helm_release" "phippyandfriends" {
+  for_each   = var.apps
+  name       = each.key
+  repository = data.helm_repository.repo.metadata[0].name
+  chart      = each.key
+  namespace  = kubernetes_namespace.phippyandfriends.metadata.0.name
+  version    = lookup(each.value, "version") != "" ? lookup(each.value, "version") : null
+
+  set {
+    name  = "image.repository"
+    value = "${var.repo_name}.azurecr.io/${each.key}"
+  }
+
+  dynamic "set" {
+    for_each = local.parrot_values
+    content {
+      name  = each.key == "parrot" ? set.key : ""
+      value = each.key == "parrot" ? set.value : ""
+    }
+  }
+
+  depends_on = [
+    kubernetes_cluster_role_binding.tiller_sa_cluster_admin_rb,
+    kubernetes_service_account.tiller_sa,
+    kubernetes_cluster_role_binding.default_view
+  ]
+}
+...
+variables.tf
+
+variable "apps" {
+  type = map(object({
+    version = string
+  }))
+  default = {}
+}
+...
+terraform.tfvars
+apps = {
+  parrot = {
+    version = "v0.3.0"
+  }
+  captainkube = {
+    version = "v0.4.0"
+  }
+  nodebrady = {
+    version = "v0.3.0"
+  }
+  phippy = {
+    version = "v0.3.0"
+  }
+}
+```
+
+An example of the **for_each** and **dynamic**, new in Terraform 0.12.x. I really like defining a map of objects variable and grab the inputs from there. Also, when setting values for the helm chart (using the `dynamic "set"` block) I added a conditional addition just for a specific microservice called **parrot***
