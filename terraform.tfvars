@@ -3,13 +3,11 @@ resource_group_name = "demo"
 vnet_name = "demo"
 
 subnets = {
-  subnet-1 = {
-    name              = "aks-subnet"
+  aks-subnet = {
     cidr              = "172.16.0.0/22",
     service_endpoints = ["Microsoft.KeyVault"]
   }
-  subnet-2 = {
-    name              = "vk-subnet",
+  vk-subnet = {
     cidr              = "172.16.8.0/22",
     service_endpoints = []
   }
@@ -18,12 +16,24 @@ subnets = {
 k8s_version = "1.14.8"
 
 node_pools = {
-  pool1 = {
+  cpu = {
     node_count = 1
-    vm_size    = "Standard_B2ms"
+    vm_size    = "Standard_F2s_v2"
+    os_type    = "Linux"
   }
-  pool2 = {
-    node_count = 1
-    vm_size    = "Standard_A2_v2"
+}
+
+apps = {
+  parrot = {
+    version = "v0.3.0"
+}
+  captainkube = {
+    version = "v0.4.0"
+  }
+  nodebrady = {
+    version = "v0.3.0"
+  }
+  phippy = {
+    version = "v0.3.0"
   }
 }
