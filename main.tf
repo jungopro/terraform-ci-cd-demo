@@ -1,18 +1,22 @@
 locals {
-  tags = merge(var.tags, { "workspace" = "${terraform.workspace}" })
+  tags = merge(var.tags, { "workspace" = "${terraform.workspace}" }) # add terraform workspace tag to any additional tags given as input
 }
 
 #######################
 ### Azure Resources ###
 #######################
 
+### Resource Group
+
 resource "azurerm_resource_group" "rg" {
-  count    = var.create_resource_group ? 1 : 0
+  count    = var.create_resource_group ? 1 : 0 # conditional creation
   name     = "${terraform.workspace}-${var.resource_group_name}"
   location = var.resource_group_location
 
   tags = local.tags
 }
+
+### vNet
 
 resource "azurerm_virtual_network" "vnet" {
   name                = "${terraform.workspace}-${var.vnet_name}"
@@ -23,14 +27,18 @@ resource "azurerm_virtual_network" "vnet" {
   tags                = local.tags
 }
 
+### 1 or more subnets
+
 resource "azurerm_subnet" "subnet" {
   for_each             = var.subnets
-  name                 = lookup(each.value, "name")
+  name                 = each.key
   resource_group_name  = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefix       = lookup(each.value, "cidr")
   service_endpoints    = lookup(each.value, "service_endpoints")
 }
+
+### AKS Cluster
 
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = "${terraform.workspace}-aks"
@@ -53,34 +61,37 @@ resource "azurerm_kubernetes_cluster" "aks" {
     enabled = true
   }
 
-  dynamic "agent_pool_profile" {
-    for_each = var.profiles
-    iterator = profile
-    content {
-      name            = lookup(profile.value, "name")
-      count           = lookup(profile.value, "count")
-      vm_size         = lookup(profile.value, "vm_size")
-      os_type         = lookup(profile.value, "os_type")
-      os_disk_size_gb = lookup(profile.value, "os_disk_size_gb")
-      max_pods        = lookup(profile.value, "max_pods")
-      vnet_subnet_id  = azurerm_subnet.subnet["subnet-1"].id
-      type            = "VirtualMachineScaleSets"
+  default_node_pool {
+    name            = "default"
+    node_count      = 1
+    vm_size         = "Standard_B2ms"
+    os_disk_size_gb = 30
+    max_pods        = 30
+  }
+
+  addon_profile {
+    http_application_routing {
+      enabled = true
     }
   }
 }
 
-resource "azurerm_public_ip" "pip" {
-  name                = "${terraform.workspace}-pip"
-  location            = var.create_resource_group ? azurerm_resource_group.rg[0].location : var.resource_group_location
-  resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
-  allocation_method   = "Static"
-  tags                = local.tags
-}
+### Additional AKS Node Pools
 
+resource "azurerm_kubernetes_cluster_node_pool" "pools" {
+  for_each              = var.node_pools
+  name                  = each.key
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  vm_size               = lookup(each.value, "vm_size")
+  node_count            = lookup(each.value, "node_count")
+  os_type               = lookup(each.value, "os_type")
+}
 
 #######################
 #### K8s Resources ####
 #######################
+
+### Tiller SA & CRB (For Helm Installation, until Helm Provider Supports Helm 3. See: https://github.com/terraform-providers/terraform-provider-helm/issues/299)
 
 resource "kubernetes_service_account" "tiller_sa" {
   metadata {
@@ -106,32 +117,80 @@ resource "kubernetes_cluster_role_binding" "tiller_sa_cluster_admin_rb" {
   }
 }
 
-resource "local_file" "kubeconfig" {
-  # kube config
-  filename = "./${terraform.workspace}-config.yaml"
-  content  = azurerm_kubernetes_cluster.aks.kube_config_raw
+### Application Namespace
 
-  # helm init
-  provisioner "local-exec" {
-    command = "helm init --client-only"
-    environment = {
-      KUBECONFIG = "./${terraform.workspace}-config.yaml"
-    }
+resource "kubernetes_namespace" "phippyandfriends" {
+  metadata {
+    name = "phippyandfriends"
   }
 }
 
-resource "helm_release" "ingress" {
-  name      = "ingress"
-  chart     = "stable/nginx-ingress"
-  namespace = "kube-system"
-  timeout   = 1800
+### Application CRB
+
+resource "kubernetes_cluster_role_binding" "default_view" {
+  metadata {
+    name = "default-view"
+  }
+  role_ref {
+    kind      = "ClusterRole"
+    name      = "view"
+    api_group = "rbac.authorization.k8s.io"
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = "default"
+    namespace = kubernetes_namespace.phippyandfriends.metadata.0.name
+    api_group = ""
+  }
+}
+
+######################
+### Helm Resources ###
+######################
+
+### Get ACR Data
+
+data "helm_repository" "repo" {
+  name     = var.repo_name
+  url      = "https://${var.repo_name}.azurecr.io/helm/v1/repo"
+  username = var.repo_username
+  password = var.repo_password
+}
+
+### Define Parrot additional values to be passed as inputs to the chart
+
+locals {
+  parrot_values = {
+    "ingress.basedomain" = azurerm_kubernetes_cluster.aks.addon_profile.0.http_application_routing[0].http_application_routing_zone_name
+  }
+}
+
+### Create helm releases for each app in var.apps
+
+resource "helm_release" "phippyandfriends" {
+  for_each   = var.apps
+  name       = each.key
+  repository = data.helm_repository.repo.metadata[0].name
+  chart      = each.key
+  namespace  = kubernetes_namespace.phippyandfriends.metadata.0.name
+  version    = lookup(each.value, "version") != "" ? lookup(each.value, "version") : null
 
   set {
-    name  = "controller.service.loadBalancerIP"
-    value = azurerm_public_ip.pip.ip_address
+    name  = "image.repository"
+    value = "${var.repo_name}.azurecr.io/${each.key}"
   }
-  set {
-    name  = "controller.service.annotations.\"service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group\""
-    value = azurerm_kubernetes_cluster.aks.node_resource_group
+
+  dynamic "set" {
+    for_each = local.parrot_values
+    content {
+      name  = each.key == "parrot" ? set.key : ""
+      value = each.key == "parrot" ? set.value : ""
+    }
   }
+
+  depends_on = [
+    kubernetes_cluster_role_binding.tiller_sa_cluster_admin_rb,
+    kubernetes_service_account.tiller_sa,
+    kubernetes_cluster_role_binding.default_view
+  ]
 }

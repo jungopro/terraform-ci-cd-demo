@@ -62,7 +62,6 @@ variable "vnet_dns_servers" {
 variable "subnets" {
   description = "Map of subnet objects. name, cidr, and service_endpoints supported"
   type = map(object({
-    name              = string
     cidr              = string
     service_endpoints = list(string)
   }))
@@ -73,14 +72,30 @@ variable "k8s_version" {
   description = "K8s version to deploy in AKS. run `az aks get-versions` for a list of qualified values"
 }
 
-variable "profiles" {
+variable "node_pools" {
   type = map(object({
-    name            = string
-    count           = number
-    vm_size         = string
-    os_type         = string
-    os_disk_size_gb = number
-    max_pods        = number
+    node_count = number
+    vm_size    = string
+    os_type    = string
   }))
   default = {}
+}
+
+variable "apps" {
+  type = map(object({
+    version = string
+  }))
+  default = {}
+}
+
+variable "repo_name" {
+  description = "name of the ACR holding the charts"
+}
+
+variable "repo_username" {
+  description = "Admin username of the ACR"
+}
+
+variable "repo_password" {
+  description = "Admin password of the ACR"
 }

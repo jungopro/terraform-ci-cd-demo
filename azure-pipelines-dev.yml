@@ -20,6 +20,9 @@ jobs:
     displayName: 'Install Terraform version $(TF-Version)'
     inputs:
       terraformVersion: '$(TF-Version)'
+  - task: CmdLine@2
+    inputs:
+      script: 'export TF_LOG=TRACE'
   - template: templates/terraform.yml
     parameters:
       saName: '$(sa-name)'
@@ -31,3 +34,6 @@ jobs:
       clientId: '$(client-id)'
       clientSecret: '$(client-secret)'
       tenantId: '$(tenant-id)'
+      repoName: '$(repo-name)'
+      repoUsername: '$(repo-username)'
+      repoPassword: '$(repo-password)'
