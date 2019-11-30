@@ -31,5 +31,3 @@ jobs:
       clientId: '$(client-id)'
       clientSecret: '$(client-secret)'
       tenantId: '$(tenant-id)'
-      repoUsername: '$(repo-username)'
-      repoPassword: '$(repo-password)'
