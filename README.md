@@ -30,6 +30,20 @@ A demo for a complete Terraform CI-CD Process using Azure DevOps Pipelines, depl
 | Staging    | <img src="https://vsrm.dev.azure.com/jungodevops/_apis/public/Release/badge/b453e6a9-9219-4db4-b3fb-5d2a6c4f43df/1/4"/> |
 | Production | <img src="https://vsrm.dev.azure.com/jungodevops/_apis/public/Release/badge/b453e6a9-9219-4db4-b3fb-5d2a6c4f43df/1/5"/> |
 
+## Intro
+
+The purpose of this demo project is to showcase the abilities of Terraform to deploy a complete cloud-native application stack, from the underlying infrastructure to the application itself, using nothing but terraform
+
+The enabler that will connect all the pieces is Azure DevOps. It will:
+- Execute the CI of the individual Microservices
+- Execute the Terraform Build (Plan) and Deploy (Apply) tasks
+
+We will cover:
+
+- Create the CI process to deploy our infrastrucute to Azure
+- Create the CI to build and puse each microservice artifact to ACR
+- Create CD to deploy the entire infrastrucute and application to Azure
+
 ## Connect GitHub and Azure DevOps
 
 - The official documentation from Microsoft can be found [here](https://docs.microsoft.com/en-us/azure/devops/pipelines/repos/github?view=azure-devops&tabs=yaml)
@@ -38,11 +52,13 @@ A demo for a complete Terraform CI-CD Process using Azure DevOps Pipelines, depl
 
 ## Setup Terraform SPN, Azure DevOps, Azure Key Vault, Azure Storage
 
+- This is a prerequisite and will be done manually, before we start with Terraform automation. As this is a one-step step, I didn't bother automating it
+
 [Battle-Tested Terraform Deployment](https://codevalue.com/battle-tested-terraform-deployment/)
 
 ## Setup Azure Container Registry
 
-- Create Azure Container Registry and create an admin user. You will need those credentials for the CI / CD process in Azure DevOps
+- Create Azure Container Registry and create an admin user. We will store our application artifacts (Docker Images & Helm Charts) there. Save the credentials in the Key Vault created earlier as **repo-name, repo-username & repo-password**. You will need those credentials for the CI / CD process in Azure DevOps
 
 ## Inner-loop (dev) cycle
 
@@ -56,16 +72,13 @@ A demo for a complete Terraform CI-CD Process using Azure DevOps Pipelines, depl
 ## Setup Terraform PR
 
 - Once you tested your code, create a PR from the feature branch to the dev branch
-- At this point branch policy kicks-in and tests your merged code with the dev branch. If successfull, you can merge your pr
+- At this point branch policy kicks-in and tests your merged code with the dev branch using the **pr-pipeline**. If successfull, you can merge your pr
 - Read all about how to create policies here [Github Branch protection rules](https://help.github.com/articles/defining-the-mergeability-of-pull-requests/)
 
 ### PR Pipeline
 
-- The Azure Pipeline that validated the PR is located [here](./azure-pipelines-pr.yml)
-- Make sure to create the following variables in the UI:
-  1. $(repo_name) - ACR Repo Name
-  2. $(repo_username) - ACR Repo Username
-  3. $(repo_password) - ACR Repo Password
+- The Azure Pipeline that validates the PR is located [here](./azure-pipelines-pr.yml)
+- Make sure to connect the variable group from the Key Vault to your pipeline. Each variable in the key vault you created earlier is used as an input to the pipeline
 - Pipeline Steps:
   1. Install Terraform
   2. Initialize Terraform with state stored in Azure Storage
@@ -77,11 +90,8 @@ A demo for a complete Terraform CI-CD Process using Azure DevOps Pipelines, depl
 
 #### CI
 
-- Once the code is merged to dev, a CI-CD process is executed to deploy the changes to the *dev* environment
+- Once the code is merged to dev, a CI-CD process is executed to deploy the changes to the *dev* environment. This is basically our **testing phase**.
 - The Azure Pipeline that validates the PR is located [here](./azure-pipelines-dev.yml)
-  1. $(repo_name) - ACR Repo Name
-  2. $(repo_username) - ACR Repo Username
-  3. $(repo_password) - ACR Repo Password
 - Pipeline Steps:
   1. Install Terraform
   2. Run the steps in the [template](./templates/terraform.yml)
@@ -94,7 +104,8 @@ A demo for a complete Terraform CI-CD Process using Azure DevOps Pipelines, depl
 #### CD
 
 - A release is triggered everytime a new artifact is created from the *dev* pipeline
-- Release pipeline deploys the terraform plan to Azure
+- Release pipeline deploys the terraform plan to Azure and updates the *dev* environment
+- I will illustrate the full process to create the CD in the next steps
 
 ## Setup Application CI
 
@@ -111,9 +122,9 @@ When you create a new image you should also **manually** bump the chart minor ve
 
 ## Setup Stack CD (Deployment)
 
-The CD is done via terraform code. You should update the relevant chart version in *terraform.tfvars* to deploy your desired version of the microservice:
+The CD is done via terraform code. You should update the relevant chart version in [terraform.tfvars](./terraform.tfvars) to deploy your desired version of the microservice:
 
-```json
+```tf
 apps = {
   parrot = {
     version = "v0.3.0"
@@ -141,7 +152,7 @@ Once dev is declared **ready**, you should merge dev to master and the code will
 
 The CI / CD pipeline is the same as the **dev** pipeline, with more environments (dev > qa > stage > prod)
 
-The CD is setup with manual approval between each step so you can verify the changes are as you expect them to be
+The CD is setup with manual approval between each step so you can verify the changes are as you expect them to be.  
 Same code is deployed to all environments
 
 ## GitHub Tags
