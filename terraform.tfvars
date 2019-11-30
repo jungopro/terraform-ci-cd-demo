@@ -23,6 +23,8 @@ node_pools = {
   }
 }
 
+repo_name = "jungo"
+
 apps = {
   parrot = {
     version = "v0.3.0"
