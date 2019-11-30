@@ -23,6 +23,6 @@ steps:
 - script: 'terraform validate'
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Validate Terraform Code'
-- script: 'terraform plan -lock=true -var="subscription_id=$(subscription-id)" -var="client_id=$(client-id)" -var="client_secret=$(client-secret)" -var="tenant_id=$(tenant-id)" -var="repo_username=$(repo_username)" -var="repo_password=$(repo_password)"'
+- script: 'terraform plan -lock=true -var="subscription_id=$(subscription-id)" -var="client_id=$(client-id)" -var="client_secret=$(client-secret)" -var="tenant_id=$(tenant-id)" -var="repo_name=jungo" -var="repo_username=jungo" -var="repo_password=hGcwoyo0HHxZzuKZ47z1l9HbF=IKMb25"'
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Terraform Dry Run (Plan)'
