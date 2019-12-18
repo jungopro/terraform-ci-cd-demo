@@ -63,7 +63,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   default_node_pool {
     name            = "default"
-    node_count      = 1
+    node_count      = var.default_pool_node_count
     vm_size         = "Standard_B2ms"
     os_disk_size_gb = 30
     max_pods        = 30

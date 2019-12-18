@@ -11,6 +11,10 @@ trigger:
     - azure-pipelines.yml
 pr: none
 
+variables:
+- group: DevOps-KV
+- group: Terraform
+
 jobs:
 - job: dev
   pool:
