@@ -9,6 +9,10 @@ pr: [dev]
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+- group: DevOps-KV
+- group: Terraform
+
 steps:
 - task: TerraformInstaller@0
   displayName: 'Install Terraform version $(TF-Version)'
