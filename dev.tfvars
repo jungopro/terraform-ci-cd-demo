@@ -1,0 +1,1 @@
+default_pool_node_count = 2
