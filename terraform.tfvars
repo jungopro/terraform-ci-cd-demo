@@ -13,7 +13,7 @@ subnets = {
   }
 }
 
-k8s_version = "1.14.8"
+k8s_version = "1.15.5"
 
 node_pools = {
   cpu = {
