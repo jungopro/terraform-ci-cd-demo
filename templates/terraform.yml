@@ -19,7 +19,7 @@ steps:
 - script: 'terraform validate'
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Validate Terraform Code'
-- script: 'terraform plan -lock=true -var="subscription_id=${{ parameters.subscriptionId }}" -var="client_id=${{ parameters.clientId }}" -var="client_secret=${{ parameters.clientSecret }}" -var="tenant_id=${{ parameters.tenantId }}" -var="repo_name=${{ parameters.repoName }}" -var="repo_username=${{ parameters.repoUsername }}" -var="repo_password=${{ parameters.repoPassword }}" -out=$(Build.BuildId)-${{ parameters.workspace }}.plan'
+- script: 'terraform plan -lock=true -var="subscription_id=${{ parameters.subscriptionId }}" -var="client_id=${{ parameters.clientId }}" -var="client_secret=${{ parameters.clientSecret }}" -var="tenant_id=${{ parameters.tenantId }}" -var="repo_name=${{ parameters.repoName }}" -var="repo_username=${{ parameters.repoUsername }}" -var="repo_password=${{ parameters.repoPassword }}" -var-file=${{ parameters.workspace }}.tfvars -out=$(Build.BuildId)-${{ parameters.workspace }}.plan'
   workingDirectory: '$(Build.SourcesDirectory)'
   displayName: 'Terraform Dry Run (Plan)'
 - task: CopyFiles@2
