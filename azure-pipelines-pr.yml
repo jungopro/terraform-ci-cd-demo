@@ -21,9 +21,9 @@ steps:
 - script: terraform init -get=true -upgrade=true -backend-config=storage_account_name=$(sa-name) -backend-config=container_name=$(blob-name) -backend-config=access_key=$(sa-key) -backend-config=key=$(key)
   workingDirectory: $(Build.SourcesDirectory)
   displayName: 'Terraform Init'
-- script: terraform workspace select $(Infra-WS) || terraform workspace new $(Dev-WS)
+- script: terraform workspace select $(Infra-WS) || terraform workspace new $(Infra-WS)
   workingDirectory: $(Build.SourcesDirectory)
-  displayName: 'Switch to Environment $(Dev-WS)'
+  displayName: 'Switch to Environment $(Infra-WS)'
 - script: terraform validate
   workingDirectory: $(Build.SourcesDirectory)
   displayName: 'Validate Terraform Code'
