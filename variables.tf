@@ -102,5 +102,5 @@ variable "repo_password" {
 
 variable "default_pool_node_count" {
   description = "number of nodes in the default pool"
-  default = 1
+  default     = 1
 }
