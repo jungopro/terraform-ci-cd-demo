@@ -10,26 +10,26 @@ parameters:
   tenantId: ''
 
 steps:
-- script: terraform init -get=true -upgrade=true -backend-config='storage_account_name=${{ parameters.saName }}' -backend-config='container_name=${{ parameters.blobName }}' -backend-config='access_key=${{ parameters.saKey }}' -backend-config='key=${{ parameters.stateKey }}'
-  workingDirectory: '$(Build.SourcesDirectory)'
+- script: terraform init -get=true -upgrade=true -backend-config=storage_account_name=${{ parameters.saName }}' -backend-config=container_name=${{ parameters.blobName }} -backend-config=access_key=${{ parameters.saKey }} -backend-config=key=${{ parameters.stateKey }}
+  workingDirectory: $(Build.SourcesDirectory)
   displayName: 'Terraform Init'
 - script: terraform workspace select ${{ parameters.workspace }} || terraform workspace new ${{ parameters.workspace }}
-  workingDirectory: '$(Build.SourcesDirectory)'
+  workingDirectory: $(Build.SourcesDirectory)
   displayName: 'Switch to Environment ${{ parameters.workspace }}'
-- script: 'terraform validate'
-  workingDirectory: '$(Build.SourcesDirectory)'
+- script: terraform validate
+  workingDirectory: $(Build.SourcesDirectory)
   displayName: 'Validate Terraform Code'
-- script: 'terraform plan -lock=true -var="subscription_id=${{ parameters.subscriptionId }}" -var="client_id=${{ parameters.clientId }}" -var="client_secret=${{ parameters.clientSecret }}" -var="tenant_id=${{ parameters.tenantId }}" -var="repo_name=${{ parameters.repoName }}" -var="repo_username=${{ parameters.repoUsername }}" -var="repo_password=${{ parameters.repoPassword }}" -var-file=${{ parameters.workspace }}.tfvars -out=$(Build.BuildId)-${{ parameters.workspace }}.plan'
-  workingDirectory: '$(Build.SourcesDirectory)'
+- script: terraform plan -lock=true -var=subscription_id=${{ parameters.subscriptionId }} -var=client_id=${{ parameters.clientId }} -var=client_secret=${{ parameters.clientSecret }} -var=tenant_id=${{ parameters.tenantId }} -var=repo_name=${{ parameters.repoName }} -var=repo_username=${{ parameters.repoUsername }} -var=repo_password=${{ parameters.repoPassword }} -var-file=${{ parameters.workspace }}.tfvars -out=$(Build.BuildId)-${{ parameters.workspace }}.plan
+  workingDirectory: $(Build.SourcesDirectory)
   displayName: 'Terraform Dry Run (Plan)'
 - task: CopyFiles@2
   displayName: Prepare Artifacts
   inputs:
-    SourceFolder: '$(Build.SourcesDirectory)'
+    SourceFolder: $(Build.SourcesDirectory)
     Contents: '**/*'
-    TargetFolder: '$(Build.StagingDirectory)'
+    TargetFolder: $(Build.StagingDirectory)
 - task: PublishPipelineArtifact@1
   displayName: Publish Artifacts
   inputs:
-    targetPath: '$(Build.StagingDirectory)'
-    artifact: '$(Build.BuildId)-${{ parameters.workspace }}'
+    targetPath: $(Build.StagingDirectory)
+    artifact: $(Build.BuildId)-${{ parameters.workspace }}
