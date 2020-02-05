@@ -104,3 +104,8 @@ variable "default_pool_node_count" {
   description = "number of nodes in the default pool"
   default     = 1
 }
+
+variable "zone_name" {
+  description = "the name of the dns zone"
+  default = "jungo.guru"
+}
