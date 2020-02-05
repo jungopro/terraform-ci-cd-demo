@@ -13,15 +13,7 @@ subnets = {
   }
 }
 
-k8s_version = "1.14.8"
-
-node_pools = {
-  cpu = {
-    node_count = 1
-    vm_size    = "Standard_F2s_v2"
-    os_type    = "Linux"
-  }
-}
+k8s_version = "1.15.7"
 
 apps = {
   parrot = {

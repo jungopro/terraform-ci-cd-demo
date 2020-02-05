@@ -99,3 +99,8 @@ variable "repo_username" {
 variable "repo_password" {
   description = "Admin password of the ACR"
 }
+
+variable "default_pool_node_count" {
+  description = "number of nodes in the default pool"
+  default     = 1
+}

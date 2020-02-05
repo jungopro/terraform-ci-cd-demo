@@ -11,7 +11,33 @@ trigger:
     - azure-pipelines.yml
 pr: none
 
+variables:
+- group: DevOps-KV
+- group: Terraform
+
 jobs:
+- job: infra
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - task: TerraformInstaller@0
+    displayName: 'Install Terraform version $(TF-Version)'
+    inputs:
+      terraformVersion: $(TF-Version)
+  - template: templates/terraform.yml
+    parameters:
+      saName: $(sa-name)
+      blobName: $(blob-name)
+      saKey: $(sa-key)
+      stateKey: $(key)
+      workspace: $(Infra-WS)
+      subscriptionId: $(subscription-id)
+      clientId: $(client-id)
+      clientSecret: $(client-secret)
+      tenantId: $(tenant-id)
+      repoName: $(repo-name)
+      repoUsername: $(repo-username)
+      repoPassword: $(repo-password)
 - job: dev
   pool:
     vmImage: 'ubuntu-latest'
@@ -19,87 +45,84 @@ jobs:
   - task: TerraformInstaller@0
     displayName: 'Install Terraform version $(TF-Version)'
     inputs:
-      terraformVersion: '$(TF-Version)'
+      terraformVersion: $(TF-Version)
   - template: templates/terraform.yml
     parameters:
-      saName: '$(sa-name)'
-      blobName: '$(blob-name)'
-      saKey: '$(sa-key)'
-      stateKey: '$(key)'
-      workspace: '$(Dev-WS)'
-      subscriptionId: '$(subscription-id)'
-      clientId: '$(client-id)'
-      clientSecret: '$(client-secret)'
-      tenantId: '$(tenant-id)'
-      repoName: '$(repo-name)'
-      repoUsername: '$(repo-username)'
-      repoPassword: '$(repo-password)'
+      saName: $(sa-name)
+      blobName: $(blob-name)
+      saKey: $(sa-key)
+      stateKey: $(key)
+      workspace: $(Dev-WS)
+      subscriptionId: $(subscription-id)
+      clientId: $(client-id)
+      clientSecret: $(client-secret)
+      tenantId: $(tenant-id)
+      repoName: $(repo-name)
+      repoUsername: $(repo-username)
+      repoPassword: $(repo-password)
 - job: test
-  dependsOn: 'dev'
   pool:
     vmImage: 'ubuntu-latest'
   steps:
   - task: TerraformInstaller@0
     displayName: 'Install Terraform version $(TF-Version)'
     inputs:
-      terraformVersion: '$(TF-Version)'
+      terraformVersion: $(TF-Version)
   - template: templates/terraform.yml
     parameters:
-      saName: '$(sa-name)'
-      blobName: '$(blob-name)'
-      saKey: '$(sa-key)'
-      stateKey: '$(key)'
-      workspace: '$(Test-WS)'
-      subscriptionId: '$(subscription-id)'
-      clientId: '$(client-id)'
-      clientSecret: '$(client-secret)'
-      tenantId: '$(tenant-id)'
-      repoName: '$(repo-name)'
-      repoUsername: '$(repo-username)'
-      repoPassword: '$(repo-password)'
+      saName: $(sa-name)
+      blobName: $(blob-name)
+      saKey: $(sa-key)
+      stateKey: $(key)
+      workspace: $(Test-WS)
+      subscriptionId: $(subscription-id)
+      clientId: $(client-id)
+      clientSecret: $(client-secret)
+      tenantId: $(tenant-id)
+      repoName: $(repo-name)
+      repoUsername: $(repo-username)
+      repoPassword: $(repo-password)
 - job: stage
-  dependsOn: ['dev', 'test']
   pool:
     vmImage: 'ubuntu-latest'
   steps:
   - task: TerraformInstaller@0
     displayName: 'Install Terraform version $(TF-Version)'
     inputs:
-      terraformVersion: '$(TF-Version)'
+      terraformVersion: $(TF-Version)
   - template: templates/terraform.yml
     parameters:
-      saName: '$(sa-name)'
-      blobName: '$(blob-name)'
-      saKey: '$(sa-key)'
-      stateKey: '$(key)'
-      workspace: '$(Stage-WS)'
-      subscriptionId: '$(subscription-id)'
-      clientId: '$(client-id)'
-      clientSecret: '$(client-secret)'
-      tenantId: '$(tenant-id)'
-      repoName: '$(repo-name)'
-      repoUsername: '$(repo-username)'
-      repoPassword: '$(repo-password)'
+      saName: $(sa-name)
+      blobName: $(blob-name)
+      saKey: $(sa-key)
+      stateKey: $(key)
+      workspace: $(Stage-WS)
+      subscriptionId: $(subscription-id)
+      clientId: $(client-id)
+      clientSecret: $(client-secret)
+      tenantId: $(tenant-id)
+      repoName: $(repo-name)
+      repoUsername: $(repo-username)
+      repoPassword: $(repo-password)
 - job: prod
-  dependsOn: ['dev', 'test', 'stage']
   pool:
     vmImage: 'ubuntu-latest'
   steps:
   - task: TerraformInstaller@0
     displayName: 'Install Terraform version $(TF-Version)'
     inputs:
-      terraformVersion: '$(TF-Version)'
+      terraformVersion: $(TF-Version)
   - template: templates/terraform.yml
     parameters:
-      saName: '$(sa-name)'
-      blobName: '$(blob-name)'
-      saKey: '$(sa-key)'
-      stateKey: '$(key)'
-      workspace: '$(Production-WS)'
-      subscriptionId: '$(subscription-id)'
-      clientId: '$(client-id)'
-      clientSecret: '$(client-secret)'
-      tenantId: '$(tenant-id)'
-      repoName: '$(repo-name)'
-      repoUsername: '$(repo-username)'
-      repoPassword: '$(repo-password)'
+      saName: $(sa-name)
+      blobName: $(blob-name)
+      saKey: $(sa-key)
+      stateKey: $(key)
+      workspace: $(Production-WS)
+      subscriptionId: $(subscription-id)
+      clientId: $(client-id)
+      clientSecret: $(client-secret)
+      tenantId: $(tenant-id)
+      repoName: $(repo-name)
+      repoUsername: $(repo-username)
+      repoPassword: $(repo-password)
