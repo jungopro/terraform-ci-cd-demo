@@ -20,7 +20,7 @@ steps:
     terraformVersion: $(TF-Version)
 - script: bash <(curl -s https://raw.githubusercontent.com/n3integration/terraform-godaddy/master/install.sh)
   workingDirectory: $(Build.SourcesDirectory)
-  displayName: 'Install Terraform GoDaddy Provider'
+  displayName: 'Download Terraform GoDaddy Provider'
 - script: terraform init -get=true -upgrade=true -backend-config=storage_account_name=$(sa-name) -backend-config=container_name=$(blob-name) -backend-config=access_key=$(sa-key) -backend-config=key=$(key)
   workingDirectory: $(Build.SourcesDirectory)
   displayName: 'Terraform Init'
