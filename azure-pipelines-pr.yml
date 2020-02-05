@@ -18,6 +18,9 @@ steps:
   displayName: 'Install Terraform version $(TF-Version)'
   inputs:
     terraformVersion: $(TF-Version)
+- script: bash <(curl -s https://raw.githubusercontent.com/n3integration/terraform-godaddy/master/install.sh)
+  workingDirectory: $(Build.SourcesDirectory)
+  displayName: 'Install Terraform GoDaddy Provider'
 - script: terraform init -get=true -upgrade=true -backend-config=storage_account_name=$(sa-name) -backend-config=container_name=$(blob-name) -backend-config=access_key=$(sa-key) -backend-config=key=$(key)
   workingDirectory: $(Build.SourcesDirectory)
   displayName: 'Terraform Init'
@@ -27,6 +30,6 @@ steps:
 - script: terraform validate
   workingDirectory: $(Build.SourcesDirectory)
   displayName: 'Validate Terraform Code'
-- script: terraform plan -lock=true -var=subscription_id=$(subscription-id) -var=client_id=$(client-id) -var=client_secret=$(client-secret) -var=tenant_id=$(tenant-id) -var=repo_name=$(repo-name) -var=repo_username=$(repo-username) -var=repo_password=$(repo-password) -var-file=$(Infra-WS).tfvars
+- script: terraform plan -lock=true -var=subscription_id=$(subscription-id) -var=client_id=$(client-id) -var=client_secret=$(client-secret) -var=tenant_id=$(tenant-id) -var=godaddy_api_key=$(godaddy-api-key) -var=godaddy_api_secret=$(godaddy-api-secret) -var=repo_name=$(repo-name) -var=repo_username=$(repo-username) -var=repo_password=$(repo-password) -var-file=$(Infra-WS).tfvars
   workingDirectory: $(Build.SourcesDirectory)
   displayName: 'Terraform Dry Run (Plan)'

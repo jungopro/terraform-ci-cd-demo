@@ -102,6 +102,11 @@ resource "azurerm_dns_cname_record" "app" {
   record              = azurerm_kubernetes_cluster.aks.addon_profile.0.http_application_routing[0].http_application_routing_zone_name
 }
 
+resource "godaddy_domain_record" "jungo_guru" {
+  domain      = azurerm_dns_zone.dns_zone.name
+  nameservers = azurerm_dns_zone.dns_zone.name_servers
+}
+
 #######################
 #### K8s Resources ####
 #######################
