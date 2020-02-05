@@ -38,6 +38,8 @@ jobs:
       repoName: $(repo-name)
       repoUsername: $(repo-username)
       repoPassword: $(repo-password)
+      godaddy-api-key: $(godaddy-api-key)
+      godaddy-api-secret: $(godaddy-api-secret)
 - job: dev
   dependsOn: [infra]
   pool:
@@ -61,3 +63,5 @@ jobs:
       repoName: $(repo-name)
       repoUsername: $(repo-username)
       repoPassword: $(repo-password)
+      godaddy-api-key: $(godaddy-api-key)
+      godaddy-api-secret: $(godaddy-api-secret)
