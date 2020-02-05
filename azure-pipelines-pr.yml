@@ -30,6 +30,6 @@ steps:
 - script: terraform validate
   workingDirectory: $(Build.SourcesDirectory)
   displayName: 'Validate Terraform Code'
-- script: terraform plan -lock=true -var=subscription_id=$(subscription-id) -var=client_id=$(client-id) -var=client_secret=$(client-secret) -var=tenant_id=$(tenant-id) -var=repo_name=$(repo-name) -var=repo_username=$(repo-username) -var=repo_password=$(repo-password) -var-file=$(Infra-WS).tfvars
+- script: terraform plan -lock=true -var=subscription_id=$(subscription-id) -var=client_id=$(client-id) -var=client_secret=$(client-secret) -var=tenant_id=$(tenant-id) -var=godaddy_api_key=$(godaddy-api-key) -var=godaddy_api_secret=$(godaddy-api-secret) -var=repo_name=$(repo-name) -var=repo_username=$(repo-username) -var=repo_password=$(repo-password) -var-file=$(Infra-WS).tfvars
   workingDirectory: $(Build.SourcesDirectory)
   displayName: 'Terraform Dry Run (Plan)'

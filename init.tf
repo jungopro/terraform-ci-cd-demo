@@ -50,6 +50,11 @@ provider "helm" {
   }
 }
 
+provider "godaddy" {
+  key    = var.godaddy_api_key
+  secret = var.godaddy_api_secret
+}
+
 terraform {
   required_version = ">= 0.12"
   backend "azurerm" {}
