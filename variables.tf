@@ -109,13 +109,3 @@ variable "zone_name" {
   description = "the name of the dns zone"
   default     = "jungo.guru"
 }
-
-variable "godaddy_api_key" {
-  description = "godaddy api key"
-  default     = ""
-}
-
-variable "godaddy_api_secret" {
-  description = "godaddy api secret"
-  default     = ""
-}
