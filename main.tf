@@ -89,7 +89,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "pools" {
 
 ### DNS
 
-resource "azurerm_dns_zone" "dns_zone" {
+/*resource "azurerm_dns_zone" "dns_zone" {
   name                = var.zone_name
   resource_group_name = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
 }
@@ -105,7 +105,7 @@ resource "azurerm_dns_cname_record" "app" {
 resource "godaddy_domain_record" "jungo_guru" {
   domain      = azurerm_dns_zone.dns_zone.name
   nameservers = azurerm_dns_zone.dns_zone.name_servers
-}
+}*/
 
 #######################
 #### K8s Resources ####
