@@ -99,7 +99,7 @@ resource "azurerm_dns_cname_record" "app" {
   zone_name           = data.azurerm_dns_zone.dns_zone.name
   resource_group_name = "devops"
   ttl                 = 300
-  record              = azurerm_kubernetes_cluster.aks.addon_profile.0.http_application_routing[0].http_application_routing_zone_name
+  record              = "parrot.${azurerm_kubernetes_cluster.aks.addon_profile.0.http_application_routing[0].http_application_routing_zone_name}"
 }
 
 #######################
