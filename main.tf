@@ -174,11 +174,12 @@ data "helm_repository" "repo" {
 
 ### Define Parrot additional values to be passed as inputs to the chart
 
-/*locals {
+locals {
   parrot_values = {
     "ingress.basedomain" = azurerm_kubernetes_cluster.aks.addon_profile.0.http_application_routing[0].http_application_routing_zone_name
+    "ingress.alias"      = "phippyandfriends.${terraform.workspace}.${var.zone_name}"
   }
-}*/
+}
 
 ### Create helm releases for each app in var.apps
 
@@ -195,13 +196,13 @@ resource "helm_release" "phippyandfriends" {
     value = "${var.repo_name}.azurecr.io/${each.key}"
   }
 
-  /*dynamic "set" {
+  dynamic "set" {
     for_each = local.parrot_values
     content {
       name  = each.key == "parrot" ? set.key : ""
       value = each.key == "parrot" ? set.value : ""
     }
-  }*/
+  }
 
   depends_on = [
     kubernetes_cluster_role_binding.tiller_sa_cluster_admin_rb,
