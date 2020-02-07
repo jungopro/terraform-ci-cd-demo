@@ -176,7 +176,7 @@ data "helm_repository" "repo" {
 
 locals {
   parrot_values = {
-    "ingress.basedomain" = azurerm_dns_cname_record.app.fqdn
+    "ingress.basedomain" = azurerm_kubernetes_cluster.aks.addon_profile.0.http_application_routing[0].http_application_routing_zone_name
   }
 }
 
