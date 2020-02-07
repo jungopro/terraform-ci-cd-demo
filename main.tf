@@ -95,7 +95,7 @@ data "azurerm_dns_zone" "dns_zone" {
 }
 
 resource "azurerm_dns_cname_record" "app" {
-  name                = "${terraform.workspace}-app"
+  name                = "phippyandfriends.${terraform.workspace}"
   zone_name           = data.azurerm_dns_zone.dns_zone.name
   resource_group_name = "devops"
   ttl                 = 300
@@ -177,6 +177,7 @@ data "helm_repository" "repo" {
 locals {
   parrot_values = {
     "ingress.basedomain" = azurerm_kubernetes_cluster.aks.addon_profile.0.http_application_routing[0].http_application_routing_zone_name
+    "ingress.alias"      = "phippyandfriends.${terraform.workspace}.${var.zone_name}"
   }
 }
 
