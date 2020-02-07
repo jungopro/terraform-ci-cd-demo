@@ -10,6 +10,9 @@ parameters:
   tenantId: ''
 
 steps:
+- script: bash <(curl -s https://raw.githubusercontent.com/n3integration/terraform-godaddy/master/install.sh)
+  workingDirectory: $(Build.SourcesDirectory)
+  displayName: 'Download Terraform GoDaddy Provider'
 - script: terraform init -get=true -upgrade=true -backend-config=storage_account_name=${{ parameters.saName }} -backend-config=container_name=${{ parameters.blobName }} -backend-config=access_key=${{ parameters.saKey }} -backend-config=key=${{ parameters.stateKey }}
   workingDirectory: $(Build.SourcesDirectory)
   displayName: 'Terraform Init'

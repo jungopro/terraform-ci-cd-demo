@@ -60,7 +60,7 @@ jobs:
       repoName: $(repo-name)
       repoUsername: $(repo-username)
       repoPassword: $(repo-password)
-- job: test
+- job: qa
   pool:
     vmImage: 'ubuntu-latest'
   steps:
@@ -74,29 +74,7 @@ jobs:
       blobName: $(blob-name)
       saKey: $(sa-key)
       stateKey: $(key)
-      workspace: $(Test-WS)
-      subscriptionId: $(subscription-id)
-      clientId: $(client-id)
-      clientSecret: $(client-secret)
-      tenantId: $(tenant-id)
-      repoName: $(repo-name)
-      repoUsername: $(repo-username)
-      repoPassword: $(repo-password)
-- job: stage
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:
-  - task: TerraformInstaller@0
-    displayName: 'Install Terraform version $(TF-Version)'
-    inputs:
-      terraformVersion: $(TF-Version)
-  - template: templates/terraform.yml
-    parameters:
-      saName: $(sa-name)
-      blobName: $(blob-name)
-      saKey: $(sa-key)
-      stateKey: $(key)
-      workspace: $(Stage-WS)
+      workspace: $(QA-WS)
       subscriptionId: $(subscription-id)
       clientId: $(client-id)
       clientSecret: $(client-secret)

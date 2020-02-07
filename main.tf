@@ -87,6 +87,21 @@ resource "azurerm_kubernetes_cluster_node_pool" "pools" {
   os_type               = lookup(each.value, "os_type")
 }
 
+### DNS
+
+data "azurerm_dns_zone" "dns_zone" {
+  name                = var.zone_name
+  resource_group_name = "devops"
+}
+
+resource "azurerm_dns_cname_record" "app" {
+  name                = "${terraform.workspace}-app"
+  zone_name           = data.azurerm_dns_zone.dns_zone.name
+  resource_group_name = "devops"
+  ttl                 = 300
+  record              = "parrot.${azurerm_kubernetes_cluster.aks.addon_profile.0.http_application_routing[0].http_application_routing_zone_name}"
+}
+
 #######################
 #### K8s Resources ####
 #######################
