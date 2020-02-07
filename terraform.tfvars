@@ -17,7 +17,7 @@ k8s_version = "1.15.7"
 
 apps = {
   parrot = {
-    version = "v0.3.0"
+    version = "v0.4.0"
   }
   captainkube = {
     version = "v0.4.0"
