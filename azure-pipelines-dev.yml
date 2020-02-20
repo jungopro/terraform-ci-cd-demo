@@ -39,7 +39,6 @@ jobs:
       repoUsername: $(repo-username)
       repoPassword: $(repo-password)
 - job: dev
-  dependsOn: [infra]
   pool:
     vmImage: 'ubuntu-latest'
   steps:
