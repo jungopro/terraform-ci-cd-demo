@@ -35,8 +35,9 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  debug           = true
-  version         = "~> 1.0.0"
+  debug            = true
+  version          = "~> 1.0.0"
+  repository_cache = "${abspath(path.root)}/.helm"
 
   kubernetes {
     host                   = azurerm_kubernetes_cluster.aks.kube_config.0.host
