@@ -1,12 +1,14 @@
 ## Values to initialize the environment. No resource Creation
 
 provider "azurerm" {
-  version = "~> 1.2"
+  version = "~> 2.0"
 
   subscription_id = var.subscription_id
   client_id       = var.client_id
   client_secret   = var.client_secret
   tenant_id       = var.tenant_id
+
+  features {}
 }
 
 provider "random" {
@@ -26,7 +28,7 @@ provider "local" {
 }
 
 provider "kubernetes" {
-  version                = "1.10.0"
+  version                = "~> 1.11.0"
   host                   = azurerm_kubernetes_cluster.aks.kube_config.0.host
   client_certificate     = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_certificate)
   client_key             = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_key)
@@ -37,7 +39,6 @@ provider "kubernetes" {
 provider "helm" {
   debug            = true
   version          = "~> 1.0.0"
-  repository_cache = "${abspath(path.root)}/.helm"
 
   kubernetes {
     host                   = azurerm_kubernetes_cluster.aks.kube_config.0.host
