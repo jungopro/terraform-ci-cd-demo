@@ -33,3 +33,10 @@ steps:
 - script: terraform plan -lock=true -var=subscription_id=$(subscription-id) -var=client_id=$(client-id) -var=client_secret=$(client-secret) -var=tenant_id=$(tenant-id) -var=repo_name=$(repo-name) -var=repo_username=$(repo-username) -var=repo_password=$(repo-password) -var-file=$(Infra-WS).tfvars
   workingDirectory: $(Build.SourcesDirectory)
   displayName: 'Terraform Dry Run (Plan)'
+- task: HelmInstaller@1
+  displayName: 'Install Helm'
+  inputs:
+    helmVersionToInstall: '3.0.2'
+- script: helm repo update
+  workingDirectory: $(Build.SourcesDirectory)
+  displayName: 'Update Helm Repositories'
