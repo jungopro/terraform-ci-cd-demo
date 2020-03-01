@@ -37,6 +37,6 @@ steps:
   displayName: 'Install Helm'
   inputs:
     helmVersionToInstall: '3.0.2'
-- script: helm repo update
+- script: helm repo update --repository-config .helm/repositories.yaml
   workingDirectory: $(Build.SourcesDirectory)
   displayName: 'Update Helm Repositories'
