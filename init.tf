@@ -37,8 +37,11 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  debug            = true
-  version          = "~> 1.0.0"
+  debug                  = true
+  version                = "~> 1.0.0"
+  registry_config_path   = "${abspath(path.root)}/.helm/registry.json"
+  repository_config_path = "${abspath(path.root)}/.helm/repositories.yaml"
+  repository_cache       = "${abspath(path.root)}/.helm/repository"
 
   kubernetes {
     host                   = azurerm_kubernetes_cluster.aks.kube_config.0.host
