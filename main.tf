@@ -106,32 +106,6 @@ resource "azurerm_dns_cname_record" "app" {
 #### K8s Resources ####
 #######################
 
-### Tiller SA & CRB (For Helm Installation, until Helm Provider Supports Helm 3. See: https://github.com/terraform-providers/terraform-provider-helm/issues/299)
-
-resource "kubernetes_service_account" "tiller_sa" {
-  metadata {
-    name      = "tiller"
-    namespace = "kube-system"
-  }
-}
-
-resource "kubernetes_cluster_role_binding" "tiller_sa_cluster_admin_rb" {
-  metadata {
-    name = "tiller-cluster-role"
-  }
-  role_ref {
-    kind      = "ClusterRole"
-    name      = "cluster-admin"
-    api_group = "rbac.authorization.k8s.io"
-  }
-  subject {
-    kind      = "ServiceAccount"
-    name      = kubernetes_service_account.tiller_sa.metadata.0.name
-    namespace = "kube-system"
-    api_group = ""
-  }
-}
-
 ### Application Namespace
 
 resource "kubernetes_namespace" "phippyandfriends" {
@@ -163,15 +137,6 @@ resource "kubernetes_cluster_role_binding" "default_view" {
 ### Helm Resources ###
 ######################
 
-### Get ACR Data
-
-data "helm_repository" "repo" {
-  name     = var.repo_name
-  url      = "https://${var.repo_name}.azurecr.io/helm/v1/repo"
-  username = var.repo_username
-  password = var.repo_password
-}
-
 ### Define Parrot additional values to be passed as inputs to the chart
 
 locals {
@@ -184,12 +149,14 @@ locals {
 ### Create helm releases for each app in var.apps
 
 resource "helm_release" "phippyandfriends" {
-  for_each   = var.apps
-  name       = each.key
-  repository = data.helm_repository.repo.metadata[0].name
-  chart      = each.key
-  namespace  = kubernetes_namespace.phippyandfriends.metadata.0.name
-  version    = lookup(each.value, "version") != "" ? lookup(each.value, "version") : null
+  for_each            = var.apps
+  name                = each.key
+  repository          = "https://${var.repo_name}.azurecr.io/helm/v1/repo"
+  repository_username = var.repo_username
+  repository_password = var.repo_password
+  chart               = each.key
+  namespace           = kubernetes_namespace.phippyandfriends.metadata.0.name
+  version             = lookup(each.value, "version") != "" ? lookup(each.value, "version") : null
 
   set {
     name  = "image.repository"
@@ -205,8 +172,6 @@ resource "helm_release" "phippyandfriends" {
   }
 
   depends_on = [
-    kubernetes_cluster_role_binding.tiller_sa_cluster_admin_rb,
-    kubernetes_service_account.tiller_sa,
     kubernetes_cluster_role_binding.default_view
   ]
 }
