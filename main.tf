@@ -149,12 +149,14 @@ locals {
 ### Create helm releases for each app in var.apps
 
 resource "helm_release" "phippyandfriends" {
-  for_each   = var.apps
-  name       = each.key
-  repository = data.helm_repository.acr.metadata[0].name
-  chart      = each.key
-  namespace  = kubernetes_namespace.phippyandfriends.metadata.0.name
-  version    = lookup(each.value, "version") != "" ? lookup(each.value, "version") : null
+  for_each            = var.apps
+  name                = each.key
+  repository          = "https://${var.repo_name}.azurecr.io/helm/v1/repo"
+  repository_username = var.repo_username
+  repository_password = var.repo_password
+  chart               = each.key
+  namespace           = kubernetes_namespace.phippyandfriends.metadata.0.name
+  version             = lookup(each.value, "version") != "" ? lookup(each.value, "version") : null
 
   set {
     name  = "image.repository"
