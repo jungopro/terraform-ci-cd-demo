@@ -6,6 +6,7 @@ A demo for a complete Terraform CI-CD Process using Azure DevOps Pipelines, depl
 
 - [Terraform CI CD Demo](#terraform-ci-cd-demo)
   - [Current Status](#current-status)
+  - [Intro](#intro)
   - [Connect GitHub and Azure DevOps](#connect-github-and-azure-devops)
   - [Setup Terraform SPN, Azure DevOps, Azure Key Vault, Azure Storage](#setup-terraform-spn-azure-devops-azure-key-vault-azure-storage)
   - [Setup Azure Container Registry](#setup-azure-container-registry)
@@ -20,6 +21,7 @@ A demo for a complete Terraform CI-CD Process using Azure DevOps Pipelines, depl
   - [Setup Stack CD (Deployment)](#setup-stack-cd-deployment)
   - [Environment Promotion](#environment-promotion)
   - [GitHub Tags](#github-tags)
+  - [Terraform Code Techniques](#terraform-code-techniques)
 
 ## Current Status
 
@@ -35,6 +37,10 @@ A demo for a complete Terraform CI-CD Process using Azure DevOps Pipelines, depl
 ## Intro
 
 The purpose of this demo project is to showcase the abilities of Terraform to deploy a complete cloud-native application stack, from the underlying infrastructure to the application itself, using nothing but terraform
+
+You can find an in-depth overview in my talk [@HashiTalks 2020](https://www.hashicorp.com/resources/yes-one-can-simply-terraform-their-app-to-azure-easily)
+
+And the presentation is also available for download [@slideshare ](https://www.slideshare.net/OmerBarel/yes-one-can-simply-terraform-their-app-to-azure-easily)
 
 The enabler that will connect all the pieces is Azure DevOps. It will:
 - Execute the CI of the individual Microservices

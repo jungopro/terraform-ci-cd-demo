@@ -41,12 +41,13 @@ resource "azurerm_subnet" "subnet" {
 ### AKS Cluster
 
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = "${terraform.workspace}-aks"
-  location            = var.create_resource_group ? azurerm_resource_group.rg[0].location : var.resource_group_location
-  resource_group_name = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
-  dns_prefix          = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
-  kubernetes_version  = var.k8s_version
-  tags                = local.tags
+  name                       = "${terraform.workspace}-aks"
+  location                   = var.create_resource_group ? azurerm_resource_group.rg[0].location : var.resource_group_location
+  resource_group_name        = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
+  dns_prefix                 = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
+  kubernetes_version         = var.k8s_version
+  tags                       = local.tags
+  enable_pod_security_policy = var.enable_pod_security_policy
 
   network_profile {
     network_plugin = "azure"
