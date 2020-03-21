@@ -14,8 +14,6 @@ pr: none
 variables:
 - group: DevOps-KV
 - group: Terraform
-- name: public-ssh-key-path
-  value: $(Agent.TempDirectory)/id_rsa.pub
 
 jobs:
 - job: infra
@@ -41,7 +39,6 @@ jobs:
       repoUsername: $(repo-username)
       repoPassword: $(repo-password)
       windowsNodeAdminPassword: $(windows-node-admin-password)
-      publicSshKeyPath: $(public-ssh-key-path)
 - job: dev
   pool:
     vmImage: 'ubuntu-latest'
@@ -65,4 +62,3 @@ jobs:
       repoUsername: $(repo-username)
       repoPassword: $(repo-password)
       windowsNodeAdminPassword: $(windows-node-admin-password)
-      publicSshKeyPath: $(public-ssh-key-path)
