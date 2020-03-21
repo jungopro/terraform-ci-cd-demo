@@ -12,6 +12,9 @@ parameters:
   publicSshKeyPath: ''
 
 steps:
+- task: DownloadSecureFile@1
+  inputs:
+    secureFile: 'id_rsa.pub'
 - script: bash <(curl -s https://raw.githubusercontent.com/n3integration/terraform-godaddy/master/install.sh)
   workingDirectory: $(Build.SourcesDirectory)
   displayName: 'Download Terraform GoDaddy Provider'

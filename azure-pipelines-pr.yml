@@ -16,6 +16,9 @@ variables:
   value: $(Agent.TempDirectory)/id_rsa.pub
 
 steps:
+- task: DownloadSecureFile@1
+  inputs:
+    secureFile: 'id_rsa.pub'
 - task: TerraformInstaller@0
   displayName: 'Install Terraform version $(TF-Version)'
   inputs:
