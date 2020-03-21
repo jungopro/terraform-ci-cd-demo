@@ -1,19 +1,17 @@
-resource_group_name = "demo"
+resource_group_name = "cloud"
 
-vnet_name = "demo"
+vnet_name = "cloud"
+
+vnet_cidr = ["172.16.0.0/16"]
 
 subnets = {
   aks-subnet = {
-    cidr              = "172.16.0.0/22",
-    service_endpoints = ["Microsoft.KeyVault"]
-  }
-  vk-subnet = {
-    cidr              = "172.16.8.0/22",
+    cidr              = "172.16.0.0/20",
     service_endpoints = []
   }
 }
 
-k8s_version = "1.15.7"
+k8s_version = "1.16.7"
 
 apps = {
   parrot = {

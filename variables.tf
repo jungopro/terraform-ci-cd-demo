@@ -44,7 +44,7 @@ variable "resource_group_location" {
 variable "vnet_cidr" {
   description = "The CIDR block for VNET"
   type        = list
-  default     = ["172.16.0.0/16"]
+  default     = []
 }
 
 variable "vnet_name" {
@@ -113,4 +113,17 @@ variable "zone_name" {
 variable "enable_pod_security_policy" {
   description = "Whether Pod Security Policies are enabled. Note that this also requires role based access control to be enabled"
   default = false
+}
+
+variable "admin_username" {
+  description = "admin username for windows nodes"
+  default = "K8sAdmin"
+}
+
+variable "windows_node_admin_password" {
+  description = "admin password for windows nodes"
+}
+
+variable "public_ssh_key_path" {
+  description = "full path to public ssh key for linux nodes"
 }
