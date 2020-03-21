@@ -1,6 +1,6 @@
-resource_group_name = "demo"
+resource_group_name = "cloud"
 
-vnet_name = "demo"
+vnet_name = "cloud"
 
 vnet_cidr = ["172.16.0.0/16"]
 
