@@ -16,28 +16,17 @@ resource "azurerm_resource_group" "rg" {
   tags = local.tags
 }
 
-### vNet
-
-resource "azurerm_virtual_network" "vnet" {
-  name                = "${terraform.workspace}-${var.vnet_name}"
-  resource_group_name = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
-  address_space       = var.vnet_cidr
-  location            = var.create_resource_group ? azurerm_resource_group.rg[0].location : var.resource_group_location
-  dns_servers         = var.vnet_dns_servers
-  tags                = local.tags
+module "vnet" {
+  source                  = "jungopro/vnet/azurerm"
+  version                 = "1.401.0"
+  tags                    = local.tags
+  resource_group_name     = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
+  resource_group_location = var.create_resource_group ? azurerm_resource_group.rg[0].location : var.resource_group_location
+  vnet_name               = "${terraform.workspace}-${var.vnet_name}"
+  vnet_cidr               = var.vnet_cidr
+  vnet_dns_servers        = var.vnet_dns_servers
+  subnets                 = var.subnets
 }
-
-### 1 or more subnets
-
-resource "azurerm_subnet" "subnet" {
-  for_each             = var.subnets
-  name                 = each.key
-  resource_group_name  = var.create_resource_group ? azurerm_resource_group.rg[0].name : var.resource_group_name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefix       = lookup(each.value, "cidr")
-  service_endpoints    = lookup(each.value, "service_endpoints")
-}
-
 ### AKS Cluster
 
 resource "azurerm_kubernetes_cluster" "aks" {
@@ -50,7 +39,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
   enable_pod_security_policy = var.enable_pod_security_policy
 
   network_profile {
-    network_plugin = "azure"
+    network_plugin     = "azure"
+    network_policy     = "calico"
+    service_cidr       = "10.0.0.0/16"
+    dns_service_ip     = "10.0.0.10"
+    docker_bridge_cidr = "172.17.0.1/16"
   }
 
   service_principal {
@@ -68,11 +61,24 @@ resource "azurerm_kubernetes_cluster" "aks" {
     vm_size         = "Standard_B2ms"
     os_disk_size_gb = 30
     max_pods        = 30
+    vnet_subnet_id  = lookup(module.vnet.subnets_full_info, element(keys(var.subnets), 0)).id
   }
 
   addon_profile {
     http_application_routing {
       enabled = true
+    }
+  }
+
+  windows_profile {
+    admin_username = var.admin_username
+    admin_password = var.windows_node_admin_password
+  }
+
+  linux_profile {
+    admin_username = var.admin_username
+    ssh_key {
+      key_data = file(var.public_ssh_key_path)
     }
   }
 }
