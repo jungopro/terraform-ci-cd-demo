@@ -12,9 +12,11 @@ parameters:
 
 steps:
 - task: DownloadSecureFile@1
+  displayName: 'Download Public SSH Key'
   inputs:
     secureFile: 'id_rsa.pub'
 - task: CopyFiles@2
+  displayName: 'Copy Public SSH Key'
   inputs:
     SourceFolder: '$(Agent.TempDirectory)'
     Contents: 'id_rsa.pub'
